@@ -1,0 +1,26 @@
+## Build and Output directories
+bin/
+obj/
+out/
+[Bb]uild/
+
+## Visual Studio & Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Local SQLite Database
+*.db
+*.db-shm
+*.db-wal
+vetclinic_local.db
+vetclinic_local.db-shm
+vetclinic_local.db-wal
+
+## Logs & Temp files
+*.log
+scratch/
+.system_generated/
