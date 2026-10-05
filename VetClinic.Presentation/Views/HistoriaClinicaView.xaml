@@ -1,0 +1,255 @@
+<UserControl x:Class="VetClinic.Presentation.Views.HistoriaClinicaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1100">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Selector de Paciente y Acciones (70 px) -->
+            <RowDefinition Height="Auto" />
+            <!-- Ficha Superior Biológica del Paciente (100 px) -->
+            <RowDefinition Height="Auto" />
+            <!-- Cuerpo Principal: Línea de Tiempo de Atenciones (RN-07) -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Barra de Búsqueda de Paciente y Acciones Rápidas -->
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Seleccionar Paciente:"
+                           Style="{StaticResource LabelTextStyle}"
+                           VerticalAlignment="Center" Margin="0,0,10,0" />
+
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding PacientesDisponibles}"
+                          SelectedItem="{Binding PacienteActual, Mode=TwoWay}"
+                          DisplayMemberPath="Nombre"
+                          Height="36" />
+
+                <!-- Barra de Progreso de Carga -->
+                <ProgressBar Grid.Column="2" Height="4"
+                             IsIndeterminate="True" Margin="20,0"
+                             Foreground="{StaticResource PrimaryGreenBrush}"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button Grid.Column="3"
+                        Content="💉 Ver Vacunación"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Height="36" Padding="12,0" Margin="0,0,10,0"
+                        Command="{Binding IrAVacunacionCommand}" />
+
+                <Button Grid.Column="4"
+                        Content="+ Nueva Consulta Médica"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Height="36" Padding="14,0"
+                        Command="{Binding NuevaConsultaCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Ficha Superior: Datos Biológicos del Paciente y Tutor Legal -->
+        <Border Grid.Row="1" Background="#F1F8E9" BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2.5*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Columna 1: Nombre y Especie -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding PacienteActual.Nombre, FallbackValue='Seleccione un Paciente'}"
+                               FontSize="20" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                    <TextBlock Text="{Binding PacienteActual.Especie, StringFormat='Especie: {0}'}"
+                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding PacienteActual.Raza, StringFormat='Raza: {0}'}"
+                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Columna 2: Sexo y Estado Reproductivo -->
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Sexo:" Style="{StaticResource LabelTextStyle}" />
+                    <TextBlock Text="{Binding PacienteActual.Sexo}" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="Estado Reproductivo:" Style="{StaticResource LabelTextStyle}" />
+                    <TextBlock Text="{Binding PacienteActual.EstadoReproductivo}" FontSize="12" />
+                </StackPanel>
+
+                <!-- Columna 3: Edad Dinámica -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Edad Cronológica Actual:" Style="{StaticResource LabelTextStyle}" />
+                    <TextBlock Text="{Binding PacienteActual.EdadFormateada}"
+                               FontSize="15" FontWeight="Bold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                    <TextBlock Text="{Binding PacienteActual.FechaNacimiento, StringFormat='Nació: {0:dd/MM/yyyy}'}"
+                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Columna 4: Peso Actual -->
+                <StackPanel Grid.Column="3">
+                    <TextBlock Text="Último Peso Registrado:" Style="{StaticResource LabelTextStyle}" />
+                    <TextBlock Text="{Binding PacienteActual.PesoActualKg, StringFormat='{}{0:F2} Kg'}"
+                               FontSize="16" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                    <TextBlock Text="Auto-sincronizado con consultas" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Columna 5: Acudiente Responsable -->
+                <StackPanel Grid.Column="4">
+                    <TextBlock Text="Propietario / Tutor:" Style="{StaticResource LabelTextStyle}" />
+                    <TextBlock Text="{Binding PacienteActual.Propietario.NombreCompleto}" FontWeight="SemiBold" Margin="0,0,0,2" />
+                    <TextBlock Text="{Binding PacienteActual.Propietario.Telefono, StringFormat='📱 {0}'}"
+                               FontWeight="Bold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Cuerpo Principal: Línea de Tiempo de Consultas (Timeline Inmutable) -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Historial Clínico Ambulatorio (Orden Cronológico Descendente)"
+                               FontSize="16" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding HistorialAtenciones.Count, StringFormat='Total de Atenciones: {0}'}"
+                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                </Grid>
+
+                <!-- Mensaje cuando no hay atenciones -->
+                <TextBlock Grid.Row="1"
+                           Text="No existen atenciones clínicas registradas para este paciente. Presione '+ Nueva Consulta Médica' para iniciar el expediente."
+                           FontSize="14" Foreground="{StaticResource TextSecondaryBrush}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Visibility="{Binding HistorialAtenciones.Count, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                <!-- Lista Cronológica Descendente de Atenciones -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding HistorialAtenciones}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{StaticResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Background="White"
+                                        Padding="16"
+                                        Margin="0,0,0,14">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Cabecera de la Atención: Fecha, Badge de Veterinario y Peso -->
+                                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Fecha y Hora -->
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="📅 " FontSize="14" />
+                                                <TextBlock Text="{Binding FechaHoraAtencion, StringFormat='{}{0:dd/MM/yyyy - hh:mm tt}'}"
+                                                           FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            </StackPanel>
+
+                                            <!-- Badge del Veterinario Tratante (RN-02) -->
+                                            <Border Grid.Column="1" HorizontalAlignment="Left" Margin="20,0,0,0"
+                                                    Background="#C8E6C9" CornerRadius="12" Padding="12,3">
+                                                <TextBlock Text="{Binding Veterinario.Nombre, StringFormat='Atendido por: {0}'}"
+                                                           FontWeight="Bold" FontSize="12" Foreground="{StaticResource DarkGreenBrush}" />
+                                            </Border>
+
+                                            <!-- Peso en Consulta -->
+                                            <Border Grid.Column="2" Background="#FFF9C4" CornerRadius="4" Padding="8,3">
+                                                <TextBlock Text="{Binding PesoConsultaKg, StringFormat='Peso: {0:F2} Kg'}"
+                                                           FontWeight="SemiBold" FontSize="12" Foreground="#F57F17" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Separator Grid.Row="1" Background="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
+                                        <!-- Cuerpo de la Atención: Anamnesis y Diagnóstico -->
+                                        <Grid Grid.Row="2" Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Motivo / Anamnesis -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                                <TextBlock Text="Motivo de Consulta / Anamnesis:" Style="{StaticResource LabelTextStyle}" />
+                                                <TextBlock Text="{Binding MotivoConsulta}" TextWrapping="Wrap" FontSize="13" />
+
+                                                <TextBlock Text="Examen Clínico:" Style="{StaticResource LabelTextStyle}" Margin="0,6,0,0"
+                                                           Visibility="{Binding ExamenClinico, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding ExamenClinico}" TextWrapping="Wrap" FontSize="13"
+                                                           Visibility="{Binding ExamenClinico, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </StackPanel>
+
+                                            <!-- Diagnóstico Clínico -->
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock Text="Diagnóstico Clínico / Presuntivo:" Style="{StaticResource LabelTextStyle}" />
+                                                <TextBlock Text="{Binding Diagnostico}" FontWeight="SemiBold" TextWrapping="Wrap" FontSize="13" Foreground="{StaticResource DarkGreenBrush}" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- Tratamiento y Prescripción -->
+                                        <Border Grid.Row="3" Background="#F9FBE7" CornerRadius="4" Padding="10" Margin="0,4,0,8">
+                                            <StackPanel>
+                                                <TextBlock Text="Plan Terapéutico y Fórmula Médica:" FontWeight="SemiBold" FontSize="12" Foreground="#33691E" />
+                                                <TextBlock Text="{Binding Tratamiento}" TextWrapping="Wrap" FontSize="13" Margin="0,4,0,0" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Pie: Próximo Control y Registro Inmutable (RN-07) -->
+                                        <Grid Grid.Row="4" Margin="0,4,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center"
+                                                        Visibility="{Binding FechaControl, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="Próximo Control Sugerido: " FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                                                <TextBlock Text="{Binding FechaControl, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="1"
+                                                       Text="🔒 Registro Clínico Inmutable - Ley 576 de 2000"
+                                                       FontSize="11" Foreground="#9E9E9E" FontStyle="Italic" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

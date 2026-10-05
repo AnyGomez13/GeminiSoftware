@@ -1,0 +1,159 @@
+<Window x:Class="VetClinic.Presentation.Views.NuevaAtencionModalView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="VetClinic Pro - Registro de Atención Médica Ambulatoria"
+        Height="680" Width="720"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{StaticResource AppBackgroundBrush}">
+
+    <Grid Margin="20">
+        <Border Style="{StaticResource CardBorderStyle}" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Cabecera -->
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Nueva Atención Médica Ambulatoria"
+                                   FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource DarkGreenBrush}" />
+                        <TextBlock Text="{Binding PacienteNombre, StringFormat='Paciente: {0}'}"
+                                   FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <Border Grid.Column="1" Background="#E8F5E9" CornerRadius="12" Padding="10,4" VerticalAlignment="Center">
+                        <TextBlock Text="Registro Legal Inmutable" FontSize="11" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                    </Border>
+                </Grid>
+
+                <!-- Formulario en 3 Bloques Lógicos -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,8,0">
+                        <!-- BLOQUE 1: Profesional y Constantes Fisiológicas -->
+                        <Border Background="#F1F8E9" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="1. Médico Veterinario Tratante y Parámetros (RN-02, RN-06)"
+                                           FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkGreenBrush}" Margin="0,0,0,8" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Veterinario Tratante Obligatorio -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="Veterinario Tratante (Dr. Fabio o Dr. William) *" Style="{StaticResource LabelTextStyle}" />
+                                        <ComboBox ItemsSource="{Binding Veterinarios}"
+                                                  SelectedItem="{Binding VeterinarioSeleccionado, Mode=TwoWay}"
+                                                  DisplayMemberPath="Nombre" />
+                                    </StackPanel>
+
+                                    <!-- Peso en Consulta -->
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Peso en Consulta (Kg) *" Style="{StaticResource LabelTextStyle}" />
+                                        <TextBox Text="{Binding PesoConsultaKg, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- BLOQUE 2: Evaluación Clínica -->
+                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="2. Anamnesis, Examen Clínico y Diagnóstico"
+                                           FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkGreenBrush}" Margin="0,0,0,8" />
+
+                                <!-- Motivo de Consulta -->
+                                <TextBlock Text="Motivo de Consulta / Anamnesis *" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding MotivoConsulta, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,8" />
+
+                                <!-- Examen Clínico -->
+                                <TextBlock Text="Examen Clínico / Constantes Vitales (FC, FR, T°, Mucosas)" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding ExamenClinico, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="50" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,8" />
+
+                                <!-- Diagnóstico -->
+                                <TextBlock Text="Diagnóstico Clínico / Presuntivo *" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding Diagnostico, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="50" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- BLOQUE 3: Prescripción, Medicación y Control -->
+                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="3. Plan Terapéutico y Control Posterior"
+                                           FontWeight="Bold" FontSize="14" Foreground="{StaticResource DarkGreenBrush}" Margin="0,0,0,8" />
+
+                                <!-- Tratamiento -->
+                                <TextBlock Text="Tratamiento, Medicamentos, Posología e Indicaciones *" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding Tratamiento, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="75" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,8" />
+
+                                <!-- Fecha de Control -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                        <TextBlock Text="Fecha Sugerida de Próximo Control" Style="{StaticResource LabelTextStyle}" />
+                                        <DatePicker SelectedDate="{Binding FechaControl, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Alerta de Error -->
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Foreground="{StaticResource ErrorBrush}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   TextWrapping="Wrap" Margin="0,0,0,8"
+                                   Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Barra Inferior -->
+                <Grid Grid.Row="2" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ProgressBar Grid.Column="0" Height="4"
+                                 IsIndeterminate="True" Margin="0,0,16,0"
+                                 Foreground="{StaticResource PrimaryGreenBrush}"
+                                 Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <Button Grid.Column="1"
+                            Content="Cancelar"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding CancelarCommand}"
+                            Margin="0,0,8,0" />
+
+                    <Button Grid.Column="2"
+                            Content="Guardar Procedimiento Médico"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding GuardarCommand}"
+                            IsDefault="True" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
