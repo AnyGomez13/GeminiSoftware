@@ -1,0 +1,194 @@
+<UserControl x:Class="VetClinic.Presentation.Views.PropietariosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Panel Superior de Filtros y Acciones (80 px) -->
+            <RowDefinition Height="80" />
+            <!-- Cuerpo Principal: División 60 / 40 -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Barra Superior de Búsqueda y Creación -->
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="16" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Campo de Búsqueda Multifactor -->
+                <TextBox Grid.Column="0"
+                         Text="{Binding CriterioBusqueda, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalContentAlignment="Center"
+                         Margin="0,0,16,0" />
+
+                <!-- Botón de Búsqueda Explícita -->
+                <Button Grid.Column="1"
+                        Content="🔍 Buscar"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding BuscarCommand}"
+                        Margin="0,0,12,0" />
+
+                <!-- Botón de Alta de Propietario -->
+                <Button Grid.Column="2"
+                        Content="+ Nuevo Propietario"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Command="{Binding AbrirCreacionPropietarioCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Contenido Dividido: 60% Tabla / 40% Ficha del Acudiente y Mascotas -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Mitad Izquierda: Tabla de Propietarios -->
+            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Directorio de Acudientes Registrados"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource DarkGreenBrush}"
+                               Margin="0,0,0,12" />
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Propietarios}"
+                              SelectedItem="{Binding PropietarioSeleccionado, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource BorderBrush}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Tipo" Binding="{Binding TipoDocumento}" Width="70" />
+                            <DataGridTextColumn Header="Documento" Binding="{Binding NumeroDocumento}" Width="120" />
+                            <DataGridTextColumn Header="Nombre Completo" Binding="{Binding NombreCompleto}" Width="*" />
+                            <DataGridTextColumn Header="Celular" Binding="{Binding Telefono}" Width="110" />
+                            <DataGridTextColumn Header="Correo" Binding="{Binding Email}" Width="150" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Separador -->
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent" />
+
+            <!-- Mitad Derecha: Panel Detallado de Propietario y Sus Pacientes -->
+            <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Encabezado de la Ficha -->
+                    <Grid Grid.Row="0" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="Ficha de Acudiente y Mascotas"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource DarkGreenBrush}" />
+
+                        <Button Grid.Column="1"
+                                Content="✏️ Modificar"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Height="30" Padding="8,0"
+                                Command="{Binding AbrirEdicionPropietarioCommand}"
+                                CommandParameter="{Binding PropietarioSeleccionado}"
+                                Visibility="{Binding PropietarioSeleccionado, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+
+                    <!-- Información de Contacto -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,16">
+                        <TextBlock Text="{Binding PropietarioSeleccionado.Nombres}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="{Binding PropietarioSeleccionado.Apellidos}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8" />
+
+                        <TextBlock Text="Teléfono / WhatsApp:" Style="{StaticResource LabelTextStyle}" />
+                        <TextBlock Text="{Binding PropietarioSeleccionado.Telefono}" Margin="0,0,0,8" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenBrush}" />
+
+                        <TextBlock Text="Dirección:" Style="{StaticResource LabelTextStyle}" />
+                        <TextBlock Text="{Binding PropietarioSeleccionado.Direccion, TargetNullValue='No registrada'}" Margin="0,0,0,8" />
+
+                        <TextBlock Text="Correo Electrónico:" Style="{StaticResource LabelTextStyle}" />
+                        <TextBlock Text="{Binding PropietarioSeleccionado.Email, TargetNullValue='No registrado'}" Margin="0,0,0,12" />
+
+                        <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,12" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Pacientes Vinculados" FontWeight="SemiBold" FontSize="15" Foreground="{StaticResource DarkGreenBrush}" VerticalAlignment="Center" />
+                            <Button Grid.Column="1"
+                                    Content="+ Mascota"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Height="28" Padding="6,0"
+                                    Command="{Binding NuevoPacienteCommand}"
+                                    CommandParameter="{Binding PropietarioSeleccionado}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Lista de Mascotas del Propietario -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PacientesDelPropietario}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Background="#F9FBF9"
+                                            Padding="12"
+                                            Margin="0,0,0,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Nombre}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource DarkGreenBrush}" />
+                                                <TextBlock Text="{Binding Especie, StringFormat='Especie: {0}'}" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                <TextBlock Text="{Binding Raza, StringFormat='Raza: {0}'}" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                <TextBlock Text="{Binding EdadFormateada, StringFormat='Edad: {0}'}" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                                                <TextBlock Text="{Binding PesoActualKg, StringFormat='Peso actual: {0:F2} Kg'}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                            </StackPanel>
+
+                                            <Button Grid.Column="1"
+                                                    Content="Historia Clínica"
+                                                    Style="{StaticResource PrimaryButtonStyle}"
+                                                    Height="32" Padding="8,0"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.VerHistoriaClinicaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

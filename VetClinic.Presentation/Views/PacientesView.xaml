@@ -1,0 +1,256 @@
+<UserControl x:Class="VetClinic.Presentation.Views.PacientesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:enums="clr-namespace:VetClinic.Domain.Enums;assembly=VetClinic.Domain"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignHeight="750" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="EspecieValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:Especie" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="SexoValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:Sexo" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="EstadoReproductivoValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:EstadoReproductivo" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Columna Izquierda: Formulario de Registro / Edición de Ficha (5*) -->
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="16" />
+            <!-- Columna Derecha: Censo de Pacientes y Buscador (5*) -->
+            <ColumnDefinition Width="5*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Formulario de Ficha Clínica del Paciente -->
+        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Cabecera del Formulario -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding TituloFormulario}"
+                               FontSize="18" FontWeight="Bold"
+                               Foreground="{StaticResource DarkGreenBrush}" />
+                    <Button Grid.Column="1"
+                            Content="+ Limpiar / Nuevo"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Height="30" Padding="8,0"
+                            Command="{Binding NuevoFormularioCommand}" />
+                </Grid>
+
+                <!-- Campos de Captura -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,8,0">
+                        <!-- Selección / Alta en caliente de Propietario (RF-04) -->
+                        <TextBlock Text="Propietario / Acudiente Responsable *" Style="{StaticResource LabelTextStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
+                                      ItemsSource="{Binding PropietariosDisponibles}"
+                                      SelectedItem="{Binding PropietarioSeleccionado, Mode=TwoWay}"
+                                      DisplayMemberPath="NombreCompleto" />
+                            <Button Grid.Column="1"
+                                    Content="+ Crear Propietario"
+                                    ToolTip="Crear nuevo acudiente en este mismo flujo"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Height="36" Padding="10,0" Margin="8,0,0,0"
+                                    Command="{Binding CrearPropietarioEnCalienteCommand}" />
+                        </Grid>
+
+                        <!-- Nombre del Paciente -->
+                        <TextBlock Text="Nombre del Paciente *" Style="{StaticResource LabelTextStyle}" />
+                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,12" />
+
+                        <!-- Especie y Raza -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Text="Especie *" Style="{StaticResource LabelTextStyle}" />
+                                <ComboBox ItemsSource="{Binding Source={StaticResource EspecieValues}}"
+                                          SelectedItem="{Binding Especie, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Text="Raza *" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding Raza, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Sexo y Estado Reproductivo -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Text="Sexo *" Style="{StaticResource LabelTextStyle}" />
+                                <ComboBox ItemsSource="{Binding Source={StaticResource SexoValues}}"
+                                          SelectedItem="{Binding Sexo, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Text="Estado Reproductivo" Style="{StaticResource LabelTextStyle}" />
+                                <ComboBox ItemsSource="{Binding Source={StaticResource EstadoReproductivoValues}}"
+                                          SelectedItem="{Binding EstadoReproductivo, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Fecha de Nacimiento y Edad Dinámica (RN-05) -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Text="Fecha de Nacimiento *" Style="{StaticResource LabelTextStyle}" />
+                                <DatePicker SelectedDate="{Binding FechaNacimiento, Mode=TwoWay}" />
+                                <CheckBox Content="Fecha aproximada / estimada"
+                                          IsChecked="{Binding EsFechaEstimada}"
+                                          Margin="0,4,0,0" FontSize="12" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Text="Edad Calculada Dinámica" Style="{StaticResource LabelTextStyle}" />
+                                <Border Background="#E8F5E9" CornerRadius="4" Padding="10,6" Height="36">
+                                    <TextBlock Text="{Binding EdadCalculada}"
+                                               FontWeight="Bold" FontSize="14"
+                                               Foreground="{StaticResource DarkGreenBrush}"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Peso en Kg (RN-06) -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Text="Peso Actual en Kg (0.01 - 150.00) *" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding PesoActualKg, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Text="Color / Señas Particulares" Style="{StaticResource LabelTextStyle}" />
+                                <TextBox Text="{Binding ColorSenas, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Alerta de Validación -->
+                        <TextBlock Text="{Binding FormularioErrorMessage}"
+                                   Foreground="{StaticResource ErrorBrush}"
+                                   FontWeight="SemiBold" FontSize="13"
+                                   TextWrapping="Wrap" Margin="0,4,0,8"
+                                   Visibility="{Binding HasFormularioError, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Barra Inferior de Guardado -->
+                <Grid Grid.Row="2" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar Grid.Column="0" Height="4"
+                                 IsIndeterminate="True" Margin="0,0,16,0"
+                                 Foreground="{StaticResource PrimaryGreenBrush}"
+                                 Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button Grid.Column="1"
+                            Content="Guardar Ficha del Paciente"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding GuardarPacienteCommand}" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Separador -->
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent" />
+
+        <!-- Columna Derecha: Censo y Búsqueda de Pacientes -->
+        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Censo General de Pacientes"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="{StaticResource DarkGreenBrush}"
+                           Margin="0,0,0,12" />
+
+                <!-- Buscador de Pacientes -->
+                <Grid Grid.Row="1" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0"
+                             Text="{Binding CriterioBusqueda, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,8,0" />
+                    <Button Grid.Column="1"
+                            Content="🔍 Buscar"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding BuscarCommand}" />
+                </Grid>
+
+                <!-- Tabla de Pacientes -->
+                <DataGrid Grid.Row="2"
+                          ItemsSource="{Binding Pacientes}"
+                          SelectedItem="{Binding PacienteSeleccionado, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          BorderThickness="1"
+                          BorderBrush="{StaticResource BorderBrush}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Paciente" Binding="{Binding Nombre}" FontWeight="SemiBold" Width="120" />
+                        <DataGridTextColumn Header="Especie" Binding="{Binding Especie}" Width="80" />
+                        <DataGridTextColumn Header="Raza" Binding="{Binding Raza}" Width="100" />
+                        <DataGridTextColumn Header="Edad" Binding="{Binding EdadFormateada}" Width="110" />
+                        <DataGridTextColumn Header="Peso (Kg)" Binding="{Binding PesoActualKg, StringFormat={}{0:F2}}" Width="70" />
+                        <DataGridTextColumn Header="Acudiente" Binding="{Binding Propietario.NombreCompleto}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Acceso Directo a Historia Clínica -->
+                <Button Grid.Row="3"
+                        Content="📋 Abrir Historia Clínica del Paciente Seleccionado"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,12,0,0"
+                        Command="{Binding IrAHistoriaClinicaCommand}"
+                        CommandParameter="{Binding PacienteSeleccionado}"
+                        Visibility="{Binding PacienteSeleccionado, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
