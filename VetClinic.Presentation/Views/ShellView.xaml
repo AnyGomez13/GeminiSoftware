@@ -1,0 +1,145 @@
+<Window x:Class="VetClinic.Presentation.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:VetClinic.Presentation.ViewModels"
+        mc:Ignorable="d"
+        Title="VetClinic Pro - Sistema de Gestión Clínica Veterinaria"
+        Height="768" Width="1200"
+        MinHeight="680" MinWidth="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Columna 0: Barra Lateral Fija de Navegación (260 px) -->
+            <ColumnDefinition Width="260" />
+            <!-- Columna 1: Área de Cabecera y Contenido Dinámico -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Barra Lateral de Navegación -->
+        <Border Grid.Column="0" Background="{StaticResource DarkGreenBrush}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Identificador Institucional -->
+                <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="20,10">
+                    <TextBlock Text="VetClinic Pro" FontSize="20" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="Clínica Veterinaria" FontSize="12" Foreground="#C8E6C9" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <!-- Opciones de Navegación del Sistema -->
+                <StackPanel Grid.Row="1" Margin="8,10">
+                    <Button Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Propietarios">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👥 " FontSize="16" />
+                            <TextBlock Text="Directorio de Propietarios" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Pacientes">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🐾 " FontSize="16" />
+                            <TextBlock Text="Censo de Pacientes" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="HistoriaClinica">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋 " FontSize="16" />
+                            <TextBlock Text="Historia Clínica" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Inmunizaciones">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💉 " FontSize="16" />
+                            <TextBlock Text="Plan de Vacunación" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource NavButtonStyle}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Recordatorios">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⏰ " FontSize="16" />
+                            <TextBlock Text="Recordatorios y Alertas" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Pie de barra lateral -->
+                <TextBlock Grid.Row="2"
+                           Text="Estación Monopuesto v1.0"
+                           FontSize="11"
+                           Foreground="#A5D6A7"
+                           Margin="20,10"
+                           HorizontalAlignment="Left" />
+            </Grid>
+        </Border>
+
+        <!-- Área Principal -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <!-- Cabecera Superior (60 px) -->
+                <RowDefinition Height="60" />
+                <!-- Contenido Dinámico Modular -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Cabecera Informativa -->
+            <Border Grid.Row="0"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Estado del Sistema -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#E8F5E9" CornerRadius="12" Padding="10,4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="●" Foreground="{StaticResource PrimaryGreenBrush}" FontSize="12" VerticalAlignment="Center" />
+                                <TextBlock Text=" Modo Autónomo Local Activo" Foreground="{StaticResource DarkGreenBrush}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="{Binding StatusMessage}" Margin="16,0,0,0" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Sesión y Cerrar Sesión -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding FechaHoraActual}" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                        <TextBlock Text="👤 " FontSize="14" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding UsuarioActivo}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" Margin="0,0,16,0" />
+                        <Button Style="{StaticResource SecondaryButtonStyle}"
+                                Height="34" Padding="12,0"
+                                Command="{Binding CerrarSesionCommand}"
+                                Content="Cerrar Sesión" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Contenedor Dinámico Central -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ContentControl Content="{Binding CurrentViewModel}" Margin="24" />
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>
