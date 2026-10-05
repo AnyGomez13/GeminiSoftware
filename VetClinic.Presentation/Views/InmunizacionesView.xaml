@@ -1,0 +1,199 @@
+<UserControl x:Class="VetClinic.Presentation.Views.InmunizacionesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:enums="clr-namespace:VetClinic.Domain.Enums;assembly=VetClinic.Domain"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="TipoBiologicoValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:TipoBiologico" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Selector de Paciente y Botón de Exportar Carnet PDF (70 px) -->
+            <RowDefinition Height="Auto" />
+            <!-- Formulario Superior de Aplicación de Biológicos (Auto) -->
+            <RowDefinition Height="Auto" />
+            <!-- Mitad Inferior: Tabla Histórica de Vacunación / Desparasitación (*) -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Barra Superior -->
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="320" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Seleccionar Paciente:"
+                           Style="{StaticResource LabelTextStyle}"
+                           VerticalAlignment="Center" Margin="0,0,10,0" />
+
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding PacientesDisponibles}"
+                          SelectedItem="{Binding PacienteActual, Mode=TwoWay}"
+                          DisplayMemberPath="Nombre"
+                          Height="36" />
+
+                <ProgressBar Grid.Column="2" Height="4"
+                             IsIndeterminate="True" Margin="20,0"
+                             Foreground="{StaticResource PrimaryGreenBrush}"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button Grid.Column="3"
+                        Content="⏰ Ver Recordatorios"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Height="36" Padding="12,0" Margin="0,0,10,0"
+                        Command="{Binding IrARecordatoriosCommand}" />
+
+                <!-- Botón Destacado: Descargar Carnet Digital PDF (RF-09, RNF-06) -->
+                <Button Grid.Column="4"
+                        Content="📄 Descargar Carnet Digital PDF"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Height="36" Padding="14,0"
+                        Command="{Binding ExportarCarnetPdfCommand}" />
+            </Grid>
+        </Border>
+
+        <!-- Formulario Superior: Registro Rápido de Dosis Aplicada (RF-08) -->
+        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Padding="16" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Registro de Vacunación o Desparasitación"
+                           FontSize="16" FontWeight="Bold"
+                           Foreground="{StaticResource DarkGreenBrush}" Margin="0,0,0,12" />
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1.5*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tipo Biológico -->
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Text="Tipo Biológico *" Style="{StaticResource LabelTextStyle}" />
+                        <ComboBox ItemsSource="{Binding Source={StaticResource TipoBiologicoValues}}"
+                                  SelectedItem="{Binding TipoBiologico, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <!-- Nombre del Producto -->
+                    <StackPanel Grid.Column="1" Margin="8,0,8,0">
+                        <TextBlock Text="Nombre del Producto / Vacuna *" Style="{StaticResource LabelTextStyle}" />
+                        <TextBox Text="{Binding NombreProducto, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <!-- Lote / Fabricante -->
+                    <StackPanel Grid.Column="2" Margin="8,0,8,0">
+                        <TextBlock Text="Lote / Laboratorio" Style="{StaticResource LabelTextStyle}" />
+                        <TextBox Text="{Binding LoteFabricante, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <!-- Veterinario Responsable (RN-02) -->
+                    <StackPanel Grid.Column="3" Margin="8,0,0,0">
+                        <TextBlock Text="Veterinario Responsable *" Style="{StaticResource LabelTextStyle}" />
+                        <ComboBox ItemsSource="{Binding Veterinarios}"
+                                  SelectedItem="{Binding VeterinarioSeleccionado, Mode=TwoWay}"
+                                  DisplayMemberPath="Nombre" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Fecha Aplicación -->
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <TextBlock Text="Fecha de Aplicación *" Style="{StaticResource LabelTextStyle}" />
+                        <DatePicker SelectedDate="{Binding FechaAplicacion, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <!-- Próximo Refuerzo (RN-08) -->
+                    <StackPanel Grid.Column="1" Margin="8,0,8,0">
+                        <TextBlock Text="Próximo Refuerzo *" Style="{StaticResource LabelTextStyle}" />
+                        <DatePicker SelectedDate="{Binding FechaRefuerzo, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <!-- Observaciones -->
+                    <StackPanel Grid.Column="2" Margin="8,0,8,0">
+                        <TextBlock Text="Observaciones / Vía de Administración" Style="{StaticResource LabelTextStyle}" />
+                        <TextBox Text="{Binding Observaciones, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <!-- Botón Registrar Dosis -->
+                    <Button Grid.Column="3"
+                            Content="+ Aplicar y Registrar Dosis"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Height="38" Padding="14,0"
+                            VerticalAlignment="Bottom"
+                            Command="{Binding RegistrarDosisCommand}" />
+                </Grid>
+
+                <!-- Mensaje de Error -->
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{StaticResource ErrorBrush}"
+                           FontWeight="SemiBold" FontSize="13"
+                           Margin="0,4,0,0"
+                           Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Mitad Inferior: Tabla Histórica de Inmunizaciones (Inmutable) -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="Historial de Inmunizaciones y Desparasitaciones Aplicadas"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource DarkGreenBrush}" />
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding Inmunizaciones.Count, StringFormat='Total Dosis: {0}'}"
+                               FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                </Grid>
+
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Inmunizaciones}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          BorderThickness="1"
+                          BorderBrush="{StaticResource BorderBrush}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding TipoBiologico}" Width="100" />
+                        <DataGridTextColumn Header="Biológico / Producto" Binding="{Binding NombreProducto}" FontWeight="SemiBold" Width="180" />
+                        <DataGridTextColumn Header="Lote" Binding="{Binding LoteFabricante, TargetNullValue='N/A'}" Width="110" />
+                        <DataGridTextColumn Header="Aplicación" Binding="{Binding FechaAplicacion, StringFormat='{}{0:dd/MM/yyyy}'}" Width="110" />
+                        <DataGridTextColumn Header="Próx. Refuerzo" Binding="{Binding FechaRefuerzo, StringFormat='{}{0:dd/MM/yyyy}'}" FontWeight="Bold" Width="120" />
+                        <DataGridTextColumn Header="Veterinario" Binding="{Binding Veterinario.Nombre}" Width="140" />
+                        <DataGridTextColumn Header="Observaciones" Binding="{Binding Observaciones, TargetNullValue='Sin notas'}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
