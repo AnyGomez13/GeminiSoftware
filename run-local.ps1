@@ -32,6 +32,7 @@ Copy-Item -Path "VetClinic.Web\dist\*" -Destination "VetClinic.Api\wwwroot" -Rec
 Write-Host "`n[3/3] Iniciando servidor Kestrel en http://localhost:5000 ..." -ForegroundColor Cyan
 Write-Host "-> Abre tu navegador en: http://localhost:5000" -ForegroundColor Yellow
 Write-Host "-> Documentación API:   http://localhost:5000/swagger" -ForegroundColor Yellow
-Write-Host "-> Presiona Ctrl+C para detener el servidor.`n" -ForegroundColor Gray
+# Abrir navegador automáticamente
+Start-Process "http://localhost:5000"
 
 dotnet run --project VetClinic.Api --urls "http://localhost:5000"

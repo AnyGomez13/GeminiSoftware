@@ -11,6 +11,9 @@ using VetClinic.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Fijar puerto local estándar http://localhost:5000 (RNF-07, RNF-08)
+builder.WebHost.UseUrls("http://localhost:5000");
+
 // Configuración de Inyección de Dependencias (Core & Infrastructure)
 builder.Services.AddDbContext<VetClinicDbContext>();
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
