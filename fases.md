@@ -181,7 +181,7 @@
 - **Dependencias de fases anteriores:** Fase W-09.
 - **IDs de requisitos que cubre:** RF-08, RF-09, RF-10, RF-11, CU-05, CU-06, RN-08, RN-09, RNF-06, RNF-09, S-04.
 - **Criterio de terminado verificable:** Generación y descarga de Carnet PDF en $\le 3$ s; tablero muestra refuerzos próximos y refuerzos vencidos; clic en "WhatsApp" abre `https://wa.me/57...` con mensaje preformateado y clic en "Correo" abre `mailto:`.
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-11: Integración en Kestrel, Pruebas E2E y Empaquetado Monopuesto Local (RNF-07, RNF-08)
 - **Objetivo:** Configurar ASP.NET Core para servir los archivos estáticos de la SPA React (`wwwroot`) desde Kestrel en `http://localhost:5000`, verificar pruebas completas y empaquetar para ejecución local en un solo paso.
