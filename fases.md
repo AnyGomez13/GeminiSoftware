@@ -156,7 +156,7 @@
 - **Dependencias de fases anteriores:** Fase W-07.
 - **IDs de requisitos que cubre:** RF-02, RF-03, RF-04, RF-05, CU-02, CU-03, RN-03, RN-04, RN-05, RN-06.
 - **Criterio de terminado verificable:** Búsqueda en tiempo real por nombre, documento o teléfono; alta exitosa de propietario con validación estricta de celular Colombia (10 dígitos iniciando en 3); visualización de edad dinámica calculada y badges de alertas médicas.
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-09: Módulo de Historia Clínica, Consulta y Curva de Peso (CU-04, RF-06, RF-07)
 - **Objetivo:** Construir la vista 360° del expediente clínico con línea de tiempo cronológica inmutable, registro de consulta en panel deslizante (*Drawer*) y gráfica de evolución de peso.

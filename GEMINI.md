@@ -72,7 +72,7 @@ Flujo unidireccional: UI React → HTTP/REST JSON → Controlador/Endpoint API �
 | Fase W-05 | Backend Web API y DTOs (`VetClinic.Api`) | Completada |
 | Fase W-06 | Setup del Frontend Web y Sistema de Diseño (`VetClinic.Web`) | Completada |
 | Fase W-07 | Módulo de Autenticación y Sesión Local (CU-01, RF-01) | Completada |
-| Fase W-08 | Módulo de Propietarios y Pacientes (CU-02, CU-03, RF-02..05) | Pendiente |
+| Fase W-08 | Módulo de Propietarios y Pacientes (CU-02, CU-03, RF-02..05) | Completada |
 | Fase W-09 | Módulo de Historia Clínica, Consulta y Curva de Peso (CU-04, RF-06, RF-07) | Pendiente |
 | Fase W-10 | Módulo de Vacunación, Carnet PDF y Recordatorios 1-Clic (CU-05, CU-06, RF-08..11) | Pendiente |
 | Fase W-11 | Integración en Kestrel, Pruebas E2E y Empaquetado Monopuesto Local | Pendiente |
