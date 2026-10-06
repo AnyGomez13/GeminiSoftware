@@ -1,0 +1,10 @@
+{
+  "name": "vetclinic-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VetClinic Pro - Scripts raiz para compilacion y desarrollo",
+  "scripts": {
+    "build": "npm --prefix VetClinic.Web run build",
+    "dev": "npm --prefix VetClinic.Web run dev"
+  }
+}
