@@ -17,9 +17,11 @@ public partial class App : Application
 {
     private ServiceProvider? _serviceProvider;
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
         var services = new ServiceCollection();
         ConfigureServices(services);
@@ -31,7 +33,7 @@ public partial class App : Application
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<VetClinicDbContext>();
             var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-            await DbInitializer.InitializeAsync(dbContext, passwordHasher);
+            DbInitializer.InitializeAsync(dbContext, passwordHasher).GetAwaiter().GetResult();
         }
 
         var loginView = _serviceProvider.GetRequiredService<LoginView>();
@@ -39,16 +41,33 @@ public partial class App : Application
         var loginViewModel = _serviceProvider.GetRequiredService<LoginViewModel>();
         var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModel>();
 
+        MainWindow = loginView;
+
+        loginView.Closed += (s, ev) =>
+        {
+            if (!shellView.IsVisible)
+            {
+                Shutdown();
+            }
+        };
+
+        shellView.Closed += (s, ev) =>
+        {
+            Shutdown();
+        };
+
         loginViewModel.LoginSucceeded += usuario =>
         {
             shellViewModel.UsuarioActivo = usuario.NombreCompleto;
             shellViewModel.EjecutarNavegacion("Propietarios");
+            MainWindow = shellView;
             shellView.Show();
             loginView.Hide();
         };
 
         shellViewModel.CerrarSesionSolicitado += () =>
         {
+            MainWindow = loginView;
             shellView.Hide();
             loginViewModel.Password = string.Empty;
             loginView.Show();
