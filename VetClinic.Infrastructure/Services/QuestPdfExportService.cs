@@ -107,7 +107,7 @@ public class QuestPdfExportService : IPdfExportService
                 page.Size(PageSizes.Letter);
                 page.Margin(30);
                 page.PageColor(Colors.White);
-                page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(10).FontColor("#212121"));
+                page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(10).FontColor("#1C1917"));
 
                 // Encabezado institucional
                 page.Header().Column(col =>
@@ -116,103 +116,106 @@ public class QuestPdfExportService : IPdfExportService
                     {
                         row.RelativeItem().Column(headerCol =>
                         {
-                            headerCol.Item().Text("CLÍNICA VETERINARIA").FontSize(18).Bold().FontColor("#1B5E20");
-                            headerCol.Item().Text("VetClinic Pro - Estación de Cuidado Animal").FontSize(10).FontColor("#616161");
-                            headerCol.Item().Text("Dres. Fabio y William | Atención Médica e Inmunización").FontSize(9).FontColor("#616161");
+                            headerCol.Item().Text("CLÍNICA VETERINARIA").FontSize(18).Bold().FontColor("#166534");
+                            headerCol.Item().Text("VetClinic Pro - Estación de Cuidado Animal").FontSize(10).FontColor("#57534E");
+                            headerCol.Item().Text("Dres. Fabio y William | Atención Médica e Inmunización").FontSize(9).FontColor("#57534E");
                         });
 
-                        row.ConstantItem(120).AlignRight().Text("CARNET DIGITAL").FontSize(12).Bold().FontColor("#2E7D32");
+                        row.ConstantItem(140).AlignRight().Column(badgeCol =>
+                        {
+                            badgeCol.Item().Background("#FBF9F5").Border(1).BorderColor("#E7E5E4").Padding(6).AlignCenter().Text("CARNET DIGITAL").FontSize(11).Bold().FontColor("#166534");
+                        });
                     });
 
-                    col.Item().PaddingVertical(8).LineHorizontal(1).LineColor("#2E7D32");
+                    col.Item().PaddingVertical(8).LineHorizontal(1.5f).LineColor("#166534");
                 });
 
-                    // Contenido del documento
-                    page.Content().Column(col =>
+                // Contenido del documento
+                page.Content().Column(col =>
+                {
+                    // Ficha del Paciente y Propietario con estética botánica
+                    col.Item().Background("#FBF9F5").Border(1).BorderColor("#E7E5E4").Padding(12).Row(row =>
                     {
-                        // Ficha del Paciente y Propietario
-                        col.Item().Background("#F8F9FA").Padding(10).Row(row =>
+                        // Columna Paciente
+                        row.RelativeItem().Column(c =>
                         {
-                            // Columna Paciente
-                            row.RelativeItem().Column(c =>
-                            {
-                                c.Item().Text("DATOS DEL PACIENTE").FontSize(11).Bold().FontColor("#1B5E20");
-                                c.Item().Text($"Nombre: {paciente.Nombre}").Bold();
-                                c.Item().Text($"Especie / Raza: {paciente.Especie} / {paciente.Raza}");
-                                c.Item().Text($"Sexo: {paciente.Sexo}");
-                                c.Item().Text($"Edad actual: {paciente.CalcularEdadFormateada()}");
-                                c.Item().Text($"Último peso: {paciente.PesoActualKg:F2} Kg");
-                            });
-
-                            // Columna Propietario
-                            row.RelativeItem().Column(c =>
-                            {
-                                c.Item().Text("DATOS DEL PROPIETARIO").FontSize(11).Bold().FontColor("#1B5E20");
-                                var prop = paciente.Propietario;
-                                if (prop != null)
-                                {
-                                    c.Item().Text($"Tutor: {prop.GetNombreCompleto()}").Bold();
-                                    c.Item().Text($"Documento: {prop.TipoDocumento} {prop.NumeroDocumento}");
-                                    c.Item().Text($"Teléfono: {prop.Telefono}");
-                                    c.Item().Text($"Correo: {prop.Email ?? "No registrado"}");
-                                }
-                                else
-                                {
-                                    c.Item().Text("Tutor no asociado.");
-                                }
-                            });
+                            c.Item().Text("DATOS DEL PACIENTE").FontSize(11).Bold().FontColor("#166534");
+                            c.Item().Text($"Nombre: {paciente.Nombre}").Bold().FontSize(12).FontColor("#1C1917");
+                            c.Item().Text($"Especie / Raza: {paciente.Especie} / {paciente.Raza}").FontColor("#57534E");
+                            c.Item().Text($"Sexo: {paciente.Sexo}").FontColor("#57534E");
+                            c.Item().Text($"Edad actual: {paciente.CalcularEdadFormateada()}").FontColor("#57534E");
+                            c.Item().Text($"Último peso: {paciente.PesoActualKg:F2} Kg").Bold().FontColor("#059669");
                         });
 
-                        col.Item().PaddingVertical(10);
-
-                        // Tabla de Inmunizaciones y Desparasitaciones (RN-08)
-                        col.Item().Text("HISTORIAL DE VACUNACIÓN Y DESPARASITACIÓN").FontSize(12).Bold().FontColor("#1B5E20");
-
-                        col.Item().PaddingTop(5).Table(table =>
+                        // Columna Propietario
+                        row.RelativeItem().Column(c =>
                         {
-                            table.ColumnsDefinition(columns =>
+                            c.Item().Text("DATOS DEL PROPIETARIO").FontSize(11).Bold().FontColor("#166534");
+                            var prop = paciente.Propietario;
+                            if (prop != null)
                             {
-                                columns.ConstantColumn(75);  // Fecha Aplicación
-                                columns.ConstantColumn(85);  // Tipo
-                                columns.RelativeColumn(2);   // Producto
-                                columns.RelativeColumn(1);   // Lote
-                                columns.ConstantColumn(75);  // Próximo Refuerzo
-                                columns.RelativeColumn(1.5f);// Médico Responsable
-                            });
-
-                            // Cabecera de tabla
-                            table.Header(header =>
-                            {
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Aplicación").Bold().FontColor(Colors.White);
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Tipo").Bold().FontColor(Colors.White);
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Biológico/Fármaco").Bold().FontColor(Colors.White);
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Lote").Bold().FontColor(Colors.White);
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Refuerzo").Bold().FontColor(Colors.White);
-                                header.Cell().Background("#1B5E20").Padding(4).Text("Veterinario").Bold().FontColor(Colors.White);
-                            });
-
-                            var listaInmunizaciones = paciente.Inmunizaciones
-                                .OrderByDescending(i => i.FechaAplicacion)
-                                .ToList();
-
-                            if (listaInmunizaciones.Count == 0)
-                            {
-                                table.Cell().ColumnSpan(6).Padding(10).AlignCenter().Text("No se registran eventos de inmunización o desparasitación.");
+                                c.Item().Text($"Tutor: {prop.GetNombreCompleto()}").Bold().FontSize(12).FontColor("#1C1917");
+                                c.Item().Text($"Documento: {prop.TipoDocumento} {prop.NumeroDocumento}").FontColor("#57534E");
+                                c.Item().Text($"Teléfono: {prop.Telefono}").FontColor("#57534E");
+                                c.Item().Text($"Correo: {prop.Email ?? "No registrado"}").FontColor("#57534E");
                             }
                             else
                             {
-                                foreach (var inm in listaInmunizaciones)
-                                {
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.FechaAplicacion.ToString("dd/MM/yyyy"));
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.TipoBiologico.ToString());
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.NombreProducto);
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.LoteFabricante ?? "-");
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.FechaRefuerzo.ToString("dd/MM/yyyy")).Bold().FontColor("#2E7D32");
-                                    table.Cell().BorderBottom(0.5f).BorderColor("#E0E0E0").Padding(4).Text(inm.Veterinario?.Nombre ?? "Dr. Fabio");
-                                }
+                                c.Item().Text("Tutor no asociado.").FontColor("#57534E");
                             }
                         });
                     });
+
+                    col.Item().PaddingVertical(10);
+
+                    // Tabla de Inmunizaciones y Desparasitaciones (RN-08)
+                    col.Item().Text("HISTORIAL DE VACUNACIÓN Y DESPARASITACIÓN").FontSize(12).Bold().FontColor("#166534");
+
+                    col.Item().PaddingTop(6).Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.ConstantColumn(80);  // Fecha Aplicación
+                            columns.ConstantColumn(90);  // Tipo
+                            columns.RelativeColumn(2);   // Producto
+                            columns.RelativeColumn(1);   // Lote
+                            columns.ConstantColumn(85);  // Próximo Refuerzo
+                            columns.RelativeColumn(1.5f);// Médico Responsable
+                        });
+
+                        // Cabecera de tabla
+                        table.Header(header =>
+                        {
+                            header.Cell().Background("#166534").Padding(5).Text("Aplicación").Bold().FontColor(Colors.White);
+                            header.Cell().Background("#166534").Padding(5).Text("Tipo").Bold().FontColor(Colors.White);
+                            header.Cell().Background("#166534").Padding(5).Text("Biológico/Fármaco").Bold().FontColor(Colors.White);
+                            header.Cell().Background("#166534").Padding(5).Text("Lote").Bold().FontColor(Colors.White);
+                            header.Cell().Background("#166534").Padding(5).Text("Refuerzo").Bold().FontColor(Colors.White);
+                            header.Cell().Background("#166534").Padding(5).Text("Veterinario").Bold().FontColor(Colors.White);
+                        });
+
+                        var listaInmunizaciones = paciente.Inmunizaciones
+                            .OrderByDescending(i => i.FechaAplicacion)
+                            .ToList();
+
+                        if (listaInmunizaciones.Count == 0)
+                        {
+                            table.Cell().ColumnSpan(6).Padding(12).AlignCenter().Text("No se registran eventos de inmunización o desparasitación.").FontColor("#57534E");
+                        }
+                        else
+                        {
+                            foreach (var inm in listaInmunizaciones)
+                            {
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.FechaAplicacion.ToString("dd/MM/yyyy")).FontColor("#1C1917");
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.TipoBiologico.ToString()).FontColor("#57534E");
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.NombreProducto).Bold().FontColor("#1C1917");
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.LoteFabricante ?? "-").FontColor("#57534E");
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.FechaRefuerzo.ToString("dd/MM/yyyy")).Bold().FontColor("#059669");
+                                table.Cell().BorderBottom(0.5f).BorderColor("#E7E5E4").Padding(5).Text(inm.Veterinario?.Nombre ?? "Dr. Fabio").FontColor("#1C1917");
+                            }
+                        }
+                    });
+                });
 
                     // Pie de página
                     page.Footer().Column(col =>

@@ -132,7 +132,7 @@
 - **Dependencias de fases anteriores:** Fase W-05.
 - **IDs de requisitos que cubre:** RNF-03, RNF-04, RNF-08.
 - **Criterio de terminado verificable:** `npm run build` en `VetClinic.Web` genera el bundle sin errores TypeScript; el layout se renderiza con navegación lateral, header, contraste accesible $\ge 4.5:1$ y diseño responsivo.
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-07: Módulo de Autenticación y Control de Sesión (CU-01, RF-01)
 - **Objetivo:** Implementar la pantalla de inicio de sesión web con diseño acogedor, validación de credenciales contra la API y gestión de sesión local.
