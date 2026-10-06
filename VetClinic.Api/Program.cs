@@ -78,6 +78,10 @@ using (var scope = app.Services.CreateScope())
 // Configurar el pipeline de solicitudes HTTP
 app.UseCors("AllowLocalhost");
 
+// Servir archivos estáticos de la SPA React en estación monopuesto local (RNF-07, RNF-08)
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -87,4 +91,9 @@ app.UseSwaggerUI(c =>
 
 app.MapControllers();
 
+// Fallback para rutas SPA React (monopuesto offline)
+app.MapFallbackToFile("index.html");
+
 app.Run();
+
+public partial class Program { }

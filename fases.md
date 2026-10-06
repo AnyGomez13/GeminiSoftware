@@ -192,7 +192,7 @@
 - **Dependencias de fases anteriores:** Fase W-10.
 - **IDs de requisitos que cubre:** RNF-01 a RNF-09, todos los RF y RN.
 - **Criterio de terminado verificable:** `dotnet test VetClinicSolution.sln` finaliza con 100% de pruebas aprobadas; `dotnet run --project VetClinic.Api` levanta el servidor Kestrel en `http://localhost:5000` y sirve la aplicación web completa de forma autónoma sin internet externa (RNF-07, RNF-08).
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ---
 
