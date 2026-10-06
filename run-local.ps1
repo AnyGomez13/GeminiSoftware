@@ -34,4 +34,4 @@ Write-Host "-> Abre tu navegador en: http://localhost:5000" -ForegroundColor Yel
 Write-Host "-> Documentación API:   http://localhost:5000/swagger" -ForegroundColor Yellow
 Write-Host "-> Presiona Ctrl+C para detener el servidor.`n" -ForegroundColor Gray
 
-dotnet run --project VetClinic.Api
+dotnet run --project VetClinic.Api --urls "http://localhost:5000"
