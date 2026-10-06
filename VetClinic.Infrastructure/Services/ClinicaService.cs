@@ -268,8 +268,19 @@ public class ClinicaService : IClinicaService
             return Result.Failure<AtencionClinica>(pesoResult.Error.Message);
         }
 
+        var paciente = await _pacienteRepository.GetByIdAsync(atencion.PacienteId, cancellationToken);
+        if (paciente == null)
+        {
+            return Result.Failure<AtencionClinica>("El paciente especificado no existe.");
+        }
+
         atencion.PesoConsultaKg = pesoResult.Value.Valor;
         atencion.CreatedAt = DateTime.Now;
+
+        // Sincronización automática de peso del paciente al registrar atención médica (RN-05, RN-06)
+        paciente.PesoActualKg = atencion.PesoConsultaKg;
+        paciente.UpdatedAt = DateTime.Now;
+        _pacienteRepository.Update(paciente);
 
         await _atencionRepository.AddAsync(atencion, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
@@ -333,6 +344,11 @@ public class ClinicaService : IClinicaService
     public async Task<IReadOnlyList<Inmunizacion>> ObtenerProximosRefuerzosAsync(int dias, CancellationToken cancellationToken = default)
     {
         return await _inmunizacionRepository.GetProximosRefuerzosAsync(dias, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Inmunizacion>> ObtenerRecordatoriosAsync(int dias, string? estado = "todos", CancellationToken cancellationToken = default)
+    {
+        return await _inmunizacionRepository.GetRecordatoriosAsync(dias, estado, cancellationToken);
     }
 
     // ==================== VETERINARIOS ====================

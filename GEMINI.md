@@ -69,7 +69,7 @@ Flujo unidireccional: UI React → HTTP/REST JSON → Controlador/Endpoint API �
 | Fase 2 | Capa de Dominio (Entidades, Value Objects e Interfaces) | Completada |
 | Fase 3 | Capa de Infraestructura y Persistencia (EF Core, SQLite y Seguridad) | Completada |
 | Fase 4 | Servicios de Infraestructura (QuestPDF y Persistencia) | Completada |
-| Fase W-05 | Backend Web API y DTOs (`VetClinic.Api`) | Pendiente |
+| Fase W-05 | Backend Web API y DTOs (`VetClinic.Api`) | Completada |
 | Fase W-06 | Setup del Frontend Web y Sistema de Diseño (`VetClinic.Web`) | Pendiente |
 | Fase W-07 | Módulo de Autenticación y Sesión Local (CU-01, RF-01) | Pendiente |
 | Fase W-08 | Módulo de Propietarios y Pacientes (CU-02, CU-03, RF-02..05) | Pendiente |

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetClinic.Domain.Tests", "V
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetClinic.Infrastructure.Tests", "VetClinic.Infrastructure.Tests\VetClinic.Infrastructure.Tests.csproj", "{069620F3-5FFF-456D-8108-57F655E090FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetClinic.Api", "VetClinic.Api\VetClinic.Api.csproj", "{991EB662-A8B0-412E-B13D-B06BB4DC637F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetClinic.Api.Tests", "VetClinic.Api.Tests\VetClinic.Api.Tests.csproj", "{5E9CE5B6-3D2A-4309-A6FC-99267754855B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{069620F3-5FFF-456D-8108-57F655E090FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{069620F3-5FFF-456D-8108-57F655E090FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{069620F3-5FFF-456D-8108-57F655E090FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{991EB662-A8B0-412E-B13D-B06BB4DC637F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{991EB662-A8B0-412E-B13D-B06BB4DC637F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{991EB662-A8B0-412E-B13D-B06BB4DC637F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{991EB662-A8B0-412E-B13D-B06BB4DC637F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E9CE5B6-3D2A-4309-A6FC-99267754855B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E9CE5B6-3D2A-4309-A6FC-99267754855B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E9CE5B6-3D2A-4309-A6FC-99267754855B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E9CE5B6-3D2A-4309-A6FC-99267754855B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

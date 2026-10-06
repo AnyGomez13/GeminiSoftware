@@ -25,6 +25,7 @@ public interface IClinicaService
     Task<Result<Inmunizacion>> RegistrarInmunizacionAsync(Inmunizacion inmunizacion, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Inmunizacion>> ObtenerInmunizacionesPacienteAsync(int pacienteId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Inmunizacion>> ObtenerProximosRefuerzosAsync(int dias, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Inmunizacion>> ObtenerRecordatoriosAsync(int dias, string? estado = "todos", CancellationToken cancellationToken = default);
 
     // Catálogo de Veterinarios
     Task<IReadOnlyList<Veterinario>> ObtenerVeterinariosActivosAsync(CancellationToken cancellationToken = default);

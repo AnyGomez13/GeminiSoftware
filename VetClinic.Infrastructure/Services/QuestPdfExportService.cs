@@ -45,32 +45,87 @@ public class QuestPdfExportService : IPdfExportService
                 Directory.CreateDirectory(directorio);
             }
 
-            var documento = Document.Create(container =>
+            var documento = ConstruirDocumento(paciente);
+            documento.GeneratePdf(rutaDestino);
+            stopwatch.Stop();
+
+            // Validación de RNF-06: compilación y escritura en disco en <= 3 segundos
+            if (stopwatch.ElapsedMilliseconds > 3000)
             {
-                container.Page(page =>
+                Debug.WriteLine($"[ADVERTENCIA] Generación de PDF tomó {stopwatch.ElapsedMilliseconds} ms, superando el objetivo de 3000 ms.");
+            }
+
+            return Result.Success(rutaDestino);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<string>($"Error al generar el carnet digital en PDF: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<byte[]>> GenerarCarnetVacunacionBytesAsync(int pacienteId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var paciente = await _context.Pacientes
+                .AsNoTracking()
+                .Include(p => p.Propietario)
+                .Include(p => p.Inmunizaciones)
+                    .ThenInclude(i => i.Veterinario)
+                .FirstOrDefaultAsync(p => p.Id == pacienteId, cancellationToken);
+
+            if (paciente is null)
+            {
+                return Result.Failure<byte[]>($"No se encontró el paciente con ID {pacienteId}.");
+            }
+
+            var documento = ConstruirDocumento(paciente);
+            var bytes = documento.GeneratePdf();
+            stopwatch.Stop();
+
+            if (stopwatch.ElapsedMilliseconds > 3000)
+            {
+                Debug.WriteLine($"[ADVERTENCIA] Generación de PDF en memoria tomó {stopwatch.ElapsedMilliseconds} ms, superando el objetivo de 3000 ms.");
+            }
+
+            return Result.Success(bytes);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<byte[]>($"Error al generar el carnet digital en PDF: {ex.Message}");
+        }
+    }
+
+    private static Document ConstruirDocumento(Paciente paciente)
+    {
+        return Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.Letter);
+                page.Margin(30);
+                page.PageColor(Colors.White);
+                page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(10).FontColor("#212121"));
+
+                // Encabezado institucional
+                page.Header().Column(col =>
                 {
-                    page.Size(PageSizes.Letter);
-                    page.Margin(30);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontFamily("Segoe UI").FontSize(10).FontColor("#212121"));
-
-                    // Encabezado institucional
-                    page.Header().Column(col =>
+                    col.Item().Row(row =>
                     {
-                        col.Item().Row(row =>
+                        row.RelativeItem().Column(headerCol =>
                         {
-                            row.RelativeItem().Column(headerCol =>
-                            {
-                                headerCol.Item().Text("CLÍNICA VETERINARIA").FontSize(18).Bold().FontColor("#1B5E20");
-                                headerCol.Item().Text("VetClinic Pro - Estación de Cuidado Animal").FontSize(10).FontColor("#616161");
-                                headerCol.Item().Text("Dres. Fabio y William | Atención Médica e Inmunización").FontSize(9).FontColor("#616161");
-                            });
-
-                            row.ConstantItem(120).AlignRight().Text("CARNET DIGITAL").FontSize(12).Bold().FontColor("#2E7D32");
+                            headerCol.Item().Text("CLÍNICA VETERINARIA").FontSize(18).Bold().FontColor("#1B5E20");
+                            headerCol.Item().Text("VetClinic Pro - Estación de Cuidado Animal").FontSize(10).FontColor("#616161");
+                            headerCol.Item().Text("Dres. Fabio y William | Atención Médica e Inmunización").FontSize(9).FontColor("#616161");
                         });
 
-                        col.Item().PaddingVertical(8).LineHorizontal(1).LineColor("#2E7D32");
+                        row.ConstantItem(120).AlignRight().Text("CARNET DIGITAL").FontSize(12).Bold().FontColor("#2E7D32");
                     });
+
+                    col.Item().PaddingVertical(8).LineHorizontal(1).LineColor("#2E7D32");
+                });
 
                     // Contenido del documento
                     page.Content().Column(col =>
@@ -177,21 +232,5 @@ public class QuestPdfExportService : IPdfExportService
                     });
                 });
             });
-
-            documento.GeneratePdf(rutaDestino);
-            stopwatch.Stop();
-
-            // Validación de RNF-06: compilación y escritura en disco en <= 3 segundos
-            if (stopwatch.ElapsedMilliseconds > 3000)
-            {
-                Debug.WriteLine($"[ADVERTENCIA] Generación de PDF tomó {stopwatch.ElapsedMilliseconds} ms, superando el objetivo de 3000 ms.");
-            }
-
-            return Result.Success(rutaDestino);
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure<string>($"Error al generar el carnet digital en PDF: {ex.Message}");
-        }
     }
 }

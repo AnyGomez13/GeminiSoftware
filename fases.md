@@ -115,7 +115,7 @@
 - **Dependencias de fases anteriores:** Fase 4.
 - **IDs de requisitos que cubre:** RF-01 a RF-11, RN-01 a RN-09, RNF-01, RNF-05, RNF-08.
 - **Criterio de terminado verificable:** `dotnet build VetClinicSolution.sln` finaliza con código 0 y 0 errores; los endpoints REST devuelven respuestas HTTP JSON válidas en Swagger / pruebas unitarias, incluyendo descarga del PDF de carnet.
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-06: Setup del Frontend Web y Sistema de Diseño (`VetClinic.Web`)
 - **Objetivo:** Inicializar la SPA en React 18 con TypeScript y Vite, configurar Tailwind CSS con la paleta cálida/botánica, Lucide Icons, Sonner y el layout clínico maestro.
