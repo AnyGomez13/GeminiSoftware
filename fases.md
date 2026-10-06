@@ -168,7 +168,7 @@
 - **Dependencias de fases anteriores:** Fase W-08.
 - **IDs de requisitos que cubre:** RF-06, RF-07, CU-04, RN-02, RN-05, RN-07, STF-01, STF-05.
 - **Criterio de terminado verificable:** Registro de atención asigna obligatoriamente al Dr. Fabio o Dr. William; actualiza en tiempo real el peso del paciente y agrega un punto a la curva gráfica; no existen opciones para editar ni eliminar historias confirmadas (inmutabilidad legal Ley 576).
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-10: Módulo de Vacunación, Carnet PDF y Recordatorios 1-Clic (CU-05, CU-06, RF-08..11)
 - **Objetivo:** Implementar la gestión de biológicos, descarga y previsualización del Carnet Digital PDF, y tablero de recordatorios con segmentación de vencidas y próximas a vencer con enlaces directos a WhatsApp y correo.

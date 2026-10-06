@@ -5,6 +5,7 @@ import { MainLayout } from './components/layout/MainLayout';
 import type { NavTab } from './components/layout/Sidebar';
 import { PropietariosPage } from './pages/PropietariosPage';
 import { PacientesPage } from './pages/PacientesPage';
+import { HistoriaClinicaPage } from './pages/HistoriaClinicaPage';
 import {
   Stethoscope,
   ShieldCheck
@@ -59,6 +60,16 @@ const AppContent: React.FC = () => {
               setActiveTab('historias');
             }}
             onSelectVacunacionTab={(pacienteId) => {
+              setSelectedPacienteId(pacienteId);
+              setActiveTab('vacunacion');
+            }}
+          />
+        );
+      case 'historias':
+        return (
+          <HistoriaClinicaPage
+            initialPacienteId={selectedPacienteId}
+            onGoToVacunacion={(pacienteId) => {
               setSelectedPacienteId(pacienteId);
               setActiveTab('vacunacion');
             }}
