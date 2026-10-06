@@ -77,8 +77,8 @@
 - **Criterio de terminado verificable:** `dotnet test VetClinic.Infrastructure.Tests` aprueba 100% de las pruebas: derivación PBKDF2 (100.000 iteraciones, salt 16 bytes), inicialización de SQLite con PRAGMAs (`foreign_keys=ON`, `journal_mode=WAL`), aborto en base de datos ante sentencias `UPDATE`/`DELETE` en atenciones e inmunizaciones, y actualización de peso del paciente vía trigger.
 - **Estado:** Completada.
 
-## Fase 4: Servicios de Infraestructura (QuestPDF y Lanzadores Externos)
-- **Objetivo:** Implementar el motor de exportación de carnet digital a PDF mediante QuestPDF y la apertura de hipervínculos del sistema operativo (`wa.me` y `mailto:`) a costo cero.
+## Fase 4: Servicios de Infraestructura (QuestPDF y Persistencia)
+- **Objetivo:** Implementar el motor de exportación de carnet digital a PDF mediante QuestPDF y persistencia verificada.
 - **Archivos a crear o modificar:**
   - `VetClinic.Infrastructure/Services/QuestPdfExportService.cs`
   - `VetClinic.Infrastructure/Services/ExternalLauncherService.cs`
@@ -89,108 +89,114 @@
 - **Criterio de terminado verificable:** Prueba automatizada genera un archivo PDF binario válido en disco en tiempo $\le 3$ segundos (RNF-06); pruebas unitarias validan que las URIs generadas para WhatsApp y correo electrónico cumplan la especificación RFC sin alterar caracteres especiales.
 - **Estado:** Completada.
 
-## Fase 5: Capa de Presentación (Infraestructura MVVM, Estilos y Shell)
-- **Objetivo:** Construir la base de la aplicación WPF con DI nativa, converters XAML, servicios de navegación/diálogos, estilos visuales de consultorio y la ventana principal `ShellView`.
+---
+
+# Fases de la Rama Web (Arquitectura Localhost: ASP.NET Core API + React/TypeScript SPA)
+
+## Fase W-05: Backend Web API y DTOs (`VetClinic.Api`)
+- **Objetivo:** Crear el proyecto ASP.NET Core Web API (.NET 8), definir DTOs desacoplados para eliminar ciclos circulares JSON, e implementar controladores REST con inyección de dependencias de `VetClinic.Infrastructure`.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Presentation/App.xaml`
-  - `VetClinic.Presentation/App.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/Common/ViewModelBase.cs`
-  - `VetClinic.Presentation/ViewModels/Common/RelayCommand.cs`
-  - `VetClinic.Presentation/ViewModels/Common/AsyncRelayCommand.cs`
-  - `VetClinic.Presentation/Converters/BooleanToVisibilityConverter.cs`
-  - `VetClinic.Presentation/Converters/DateFormatConverter.cs`
-  - `VetClinic.Presentation/Converters/KilogramsFormatConverter.cs`
-  - `VetClinic.Presentation/Services/IDialogService.cs`
-  - `VetClinic.Presentation/Services/DialogService.cs`
-  - `VetClinic.Presentation/Services/INavigationService.cs`
-  - `VetClinic.Presentation/Services/NavigationService.cs`
-  - `VetClinic.Presentation/Styles/Colors.xaml`
-  - `VetClinic.Presentation/Styles/Typography.xaml`
-  - `VetClinic.Presentation/Styles/Controls.xaml`
-  - `VetClinic.Presentation/Views/ShellView.xaml`
-  - `VetClinic.Presentation/Views/ShellView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/ShellViewModel.cs`
+  - `VetClinic.Api/VetClinic.Api.csproj`
+  - `VetClinic.Api/Program.cs`
+  - `VetClinic.Api/Dtos/AuthDtos.cs`
+  - `VetClinic.Api/Dtos/PropietarioDtos.cs`
+  - `VetClinic.Api/Dtos/PacienteDtos.cs`
+  - `VetClinic.Api/Dtos/AtencionDtos.cs`
+  - `VetClinic.Api/Dtos/InmunizacionDtos.cs`
+  - `VetClinic.Api/Dtos/RecordatorioDtos.cs`
+  - `VetClinic.Api/Controllers/AuthController.cs`
+  - `VetClinic.Api/Controllers/PropietariosController.cs`
+  - `VetClinic.Api/Controllers/PacientesController.cs`
+  - `VetClinic.Api/Controllers/AtencionesController.cs`
+  - `VetClinic.Api/Controllers/InmunizacionesController.cs`
+  - `VetClinic.Api/Controllers/VeterinariosController.cs`
+  - `VetClinic.Infrastructure/Services/ClinicaService.cs` (actualizaciones para sincronización inmediata de peso en memoria y búsqueda mejorada)
+  - `VetClinicSolution.sln` (incorporar proyecto `VetClinic.Api`)
 - **Dependencias de fases anteriores:** Fase 4.
-- **IDs de requisitos que cubre:** RNF-03, RNF-04, RN-10.
-- **Criterio de terminado verificable:** `ShellView` compila y se despliega con su barra de navegación lateral funcional (5 secciones), tipografía Segoe UI $\ge 14$pt y paleta institucional verde sin errores de recursos XAML en tiempo de diseño.
-- **Estado:** Completada.
+- **IDs de requisitos que cubre:** RF-01 a RF-11, RN-01 a RN-09, RNF-01, RNF-05, RNF-08.
+- **Criterio de terminado verificable:** `dotnet build VetClinicSolution.sln` finaliza con código 0 y 0 errores; los endpoints REST devuelven respuestas HTTP JSON válidas en Swagger / pruebas unitarias, incluyendo descarga del PDF de carnet.
+- **Estado:** Pendiente.
 
-## Fase 6: Módulo de Autenticación y Control de Acceso (CU-01, RF-01)
-- **Objetivo:** Implementar la pantalla y lógica de login validando credenciales contra SQLite mediante hash PBKDF2 y dando acceso a la sesión operativa.
+## Fase W-06: Setup del Frontend Web y Sistema de Diseño (`VetClinic.Web`)
+- **Objetivo:** Inicializar la SPA en React 18 con TypeScript y Vite, configurar Tailwind CSS con la paleta cálida/botánica, Lucide Icons, Sonner y el layout clínico maestro.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Domain/Services/AuthService.cs`
-  - `VetClinic.Presentation/Views/LoginView.xaml`
-  - `VetClinic.Presentation/Views/LoginView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/LoginViewModel.cs`
-  - `VetClinic.Presentation/Behaviors/PasswordHelper.cs`
-- **Dependencias de fases anteriores:** Fase 5.
+  - `VetClinic.Web/package.json`
+  - `VetClinic.Web/vite.config.ts`
+  - `VetClinic.Web/tailwind.config.js`
+  - `VetClinic.Web/src/index.css` (tokens de diseño: lino cálido `#FBF9F5`, verde bosque `#166534`, esmeralda `#059669`, ámbar `#F59E0B`)
+  - `VetClinic.Web/src/components/layout/Sidebar.tsx`
+  - `VetClinic.Web/src/components/layout/Header.tsx` (con buscador global `Ctrl + K`)
+  - `VetClinic.Web/src/components/layout/MainLayout.tsx`
+  - `VetClinic.Web/src/services/apiClient.ts`
+  - `VetClinic.Web/src/types/index.ts`
+- **Dependencias de fases anteriores:** Fase W-05.
+- **IDs de requisitos que cubre:** RNF-03, RNF-04, RNF-08.
+- **Criterio de terminado verificable:** `npm run build` en `VetClinic.Web` genera el bundle sin errores TypeScript; el layout se renderiza con navegación lateral, header, contraste accesible $\ge 4.5:1$ y diseño responsivo.
+- **Estado:** Pendiente.
+
+## Fase W-07: Módulo de Autenticación y Control de Sesión (CU-01, RF-01)
+- **Objetivo:** Implementar la pantalla de inicio de sesión web con diseño acogedor, validación de credenciales contra la API y gestión de sesión local.
+- **Archivos a crear o modificar:**
+  - `VetClinic.Web/src/pages/LoginPage.tsx`
+  - `VetClinic.Web/src/context/AuthContext.tsx`
+  - `VetClinic.Web/src/components/auth/ProtectedRoute.tsx`
+- **Dependencias de fases anteriores:** Fase W-06.
 - **IDs de requisitos que cubre:** RF-01, CU-01, RN-01, RNF-01, RNF-08.
-- **Criterio de terminado verificable:** Inicio de sesión con usuario `admin` y clave `Clinica2026*` redirige exitosamente a `ShellView`; contraseña incorrecta despliega mensaje "Usuario o contraseña incorrectos" en rojo y limpia el campo sin permitir acceso.
-- **Estado:** Completada.
+- **Criterio de terminado verificable:** Login con `admin` / `Clinica2026*` autentica y redirige a la vista principal almacenando sesión; contraseña inválida despliega feedback visual en rojo y bloquea el acceso.
+- **Estado:** Pendiente.
 
-## Fase 7: Módulo de Propietarios y Pacientes (CU-02, RF-02..05)
-- **Objetivo:** Implementar el directorio de acudientes, censo de mascotas, búsqueda multifactor, cálculo dinámico de edad y alta ágil de propietario en el mismo formulario.
+## Fase W-08: Módulo de Directorio de Propietarios y Censo de Pacientes (CU-02, CU-03, RF-02..05)
+- **Objetivo:** Construir las interfaces para directorio de acudientes y censo de mascotas, con búsqueda reactiva, modales de alta/edición y validación de celular Colombia.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Domain/Services/ClinicaService.cs` (métodos de propietarios y pacientes)
-  - `VetClinic.Presentation/Views/PropietariosView.xaml`
-  - `VetClinic.Presentation/Views/PropietariosView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/PropietariosViewModel.cs`
-  - `VetClinic.Presentation/Views/PropietarioModalView.xaml`
-  - `VetClinic.Presentation/Views/PropietarioModalView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/PropietarioModalViewModel.cs`
-  - `VetClinic.Presentation/Views/PacientesView.xaml`
-  - `VetClinic.Presentation/Views/PacientesView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/PacientesViewModel.cs`
-- **Dependencias de fases anteriores:** Fase 6.
-- **IDs de requisitos que cubre:** RF-02, RF-03, RF-04, RF-05, CU-02, RN-03, RN-04, RN-05, RN-06, RN-10, S-01, S-02.
-- **Criterio de terminado verificable:** Comportamiento observable: creación de paciente vinculando un propietario creado en la misma ventana (`PropietarioModalView`); bloqueo ante teléfonos de menos de 10 dígitos o que no inicien en 3; cálculo y renderizado automático de edad en la ficha en formato verbal.
-- **Estado:** Completada.
+  - `VetClinic.Web/src/pages/PropietariosPage.tsx`
+  - `VetClinic.Web/src/components/propietarios/PropietarioModal.tsx`
+  - `VetClinic.Web/src/pages/PacientesPage.tsx`
+  - `VetClinic.Web/src/components/pacientes/PacienteModal.tsx`
+  - `VetClinic.Web/src/components/pacientes/AlertasBadge.tsx`
+- **Dependencias de fases anteriores:** Fase W-07.
+- **IDs de requisitos que cubre:** RF-02, RF-03, RF-04, RF-05, CU-02, CU-03, RN-03, RN-04, RN-05, RN-06.
+- **Criterio de terminado verificable:** Búsqueda en tiempo real por nombre, documento o teléfono; alta exitosa de propietario con validación estricta de celular Colombia (10 dígitos iniciando en 3); visualización de edad dinámica calculada y badges de alertas médicas.
+- **Estado:** Pendiente.
 
-## Fase 8: Módulo de Historia Clínica y Atenciones Médicas (CU-03, CU-04, RF-06, RF-07)
-- **Objetivo:** Implementar la captura rápida de consultas ambulatorias con selección obligatoria del profesional (Dr. Fabio o Dr. William) y el despliegue del expediente inmutable en orden cronológico descendente.
+## Fase W-09: Módulo de Historia Clínica, Consulta y Curva de Peso (CU-04, RF-06, RF-07)
+- **Objetivo:** Construir la vista 360° del expediente clínico con línea de tiempo cronológica inmutable, registro de consulta en panel deslizante (*Drawer*) y gráfica de evolución de peso.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Infrastructure/Services/ClinicaService.cs` (registro de consultas e historial clínico)
-  - `VetClinic.Presentation/Views/HistoriaClinicaView.xaml`
-  - `VetClinic.Presentation/Views/HistoriaClinicaView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/HistoriaClinicaViewModel.cs`
-  - `VetClinic.Presentation/Views/NuevaAtencionModalView.xaml`
-  - `VetClinic.Presentation/Views/NuevaAtencionModalView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/NuevaAtencionViewModel.cs`
-- **Dependencias de fases anteriores:** Fase 7.
-- **IDs de requisitos que cubre:** RF-06, RF-07, CU-03, CU-04, RN-02, RN-06, RN-07, RN-10, RNF-02, RNF-03, RNF-05, S-03, S-05.
-- **Criterio de terminado verificable:** Guardado de atención bloqueado con alerta visual si no se elige veterinario tratante; tiempo de captura clínica completable en $\le 90$ segundos; renderizado de historial con 100 atenciones en $< 1000$ ms en orden cronológico descendente sin opciones de edición/borrado.
-- **Estado:** Completada.
+  - `VetClinic.Web/src/pages/HistoriaClinicaPage.tsx`
+  - `VetClinic.Web/src/components/historia/TimelineAtenciones.tsx`
+  - `VetClinic.Web/src/components/historia/NuevaAtencionDrawer.tsx`
+  - `VetClinic.Web/src/components/historia/CurvaPesoChart.tsx`
+- **Dependencias de fases anteriores:** Fase W-08.
+- **IDs de requisitos que cubre:** RF-06, RF-07, CU-04, RN-02, RN-05, RN-07, STF-01, STF-05.
+- **Criterio de terminado verificable:** Registro de atención asigna obligatoriamente al Dr. Fabio o Dr. William; actualiza en tiempo real el peso del paciente y agrega un punto a la curva gráfica; no existen opciones para editar ni eliminar historias confirmadas (inmutabilidad legal Ley 576).
+- **Estado:** Pendiente.
 
-## Fase 9: Módulo de Vacunación, Carnet PDF y Recordatorios Gratuitos (CU-05, CU-06, RF-08..11)
-- **Objetivo:** Implementar el registro de inmunizaciones/desparasitaciones, generación asíncrona del carnet digital en PDF y panel de recordatorios con despacho a `wa.me` y `mailto:`.
+## Fase W-10: Módulo de Vacunación, Carnet PDF y Recordatorios 1-Clic (CU-05, CU-06, RF-08..11)
+- **Objetivo:** Implementar la gestión de biológicos, descarga y previsualización del Carnet Digital PDF, y tablero de recordatorios con segmentación de vencidas y próximas a vencer con enlaces directos a WhatsApp y correo.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Infrastructure/Services/ClinicaService.cs` (registro y consulta de vacunas)
-  - `VetClinic.Presentation/Views/InmunizacionesView.xaml`
-  - `VetClinic.Presentation/Views/InmunizacionesView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/InmunizacionesViewModel.cs`
-  - `VetClinic.Presentation/Views/RecordatoriosView.xaml`
-  - `VetClinic.Presentation/Views/RecordatoriosView.xaml.cs`
-  - `VetClinic.Presentation/ViewModels/RecordatoriosViewModel.cs`
-- **Dependencias de fases anteriores:** Fase 8.
-- **IDs de requisitos que cubre:** RF-08, RF-09, RF-10, RF-11, CU-05, CU-06, RN-08, RN-09, RNF-06, RNF-07, RNF-09, S-04.
-- **Criterio de terminado verificable:** Validación impide registrar refuerzos con fecha anterior o igual a la aplicación; clic en "Descargar Carnet Digital PDF" genera el documento en disco en $\le 3$ segundos; botones de notificación abren el cliente de mensajería/correo con mensaje preformateado sin costos de infraestructura.
-- **Estado:** Completada.
+  - `VetClinic.Web/src/pages/VacunacionPage.tsx`
+  - `VetClinic.Web/src/components/vacunacion/NuevaInmunizacionModal.tsx`
+  - `VetClinic.Web/src/components/vacunacion/CarnetPdfViewer.tsx`
+  - `VetClinic.Web/src/pages/RecordatoriosPage.tsx`
+  - `VetClinic.Web/src/components/recordatorios/RecordatorioCard.tsx`
+- **Dependencias de fases anteriores:** Fase W-09.
+- **IDs de requisitos que cubre:** RF-08, RF-09, RF-10, RF-11, CU-05, CU-06, RN-08, RN-09, RNF-06, RNF-09, S-04.
+- **Criterio de terminado verificable:** Generación y descarga de Carnet PDF en $\le 3$ s; tablero muestra refuerzos próximos y refuerzos vencidos; clic en "WhatsApp" abre `https://wa.me/57...` con mensaje preformateado y clic en "Correo" abre `mailto:`.
+- **Estado:** Pendiente.
 
-## Fase 10: Pruebas Integrales de Aceptación, Validación RNF y Empaquetado
-- **Objetivo:** Ejecutar la suite completa de pruebas unitarias/integración, auditar métricas no funcionales y empaquetar el binario autocontenido para Windows.
+## Fase W-11: Integración en Kestrel, Pruebas E2E y Empaquetado Monopuesto Local (RNF-07, RNF-08)
+- **Objetivo:** Configurar ASP.NET Core para servir los archivos estáticos de la SPA React (`wwwroot`) desde Kestrel en `http://localhost:5000`, verificar pruebas completas y empaquetar para ejecución local en un solo paso.
 - **Archivos a crear o modificar:**
-  - `VetClinic.Infrastructure.Tests/Integration/EndToEndFlowTests.cs`
-  - `VetClinic.Presentation/VetClinic.Presentation.csproj` (configuración de publish)
-- **Dependencias de fases anteriores:** Fase 9.
+  - `VetClinic.Api/Program.cs` (Static files y SPA fallback)
+  - `VetClinic.Api.Tests/Integration/WebApiE2ETests.cs`
+  - Scripts de compilación y empaquetado de producción
+- **Dependencias de fases anteriores:** Fase W-10.
 - **IDs de requisitos que cubre:** RNF-01 a RNF-09, todos los RF y RN.
-- **Criterio de terminado verificable:** `dotnet test VetClinicSolution.sln` finaliza con 100% de pruebas aprobadas; `dotnet publish VetClinic.Presentation/VetClinic.Presentation.csproj -c Release -r win-x64 --self-contained` genera la carpeta de distribución ejecutable con SQLite embebido.
-- **Estado:** Completada.
+- **Criterio de terminado verificable:** `dotnet test VetClinicSolution.sln` finaliza con 100% de pruebas aprobadas; `dotnet run --project VetClinic.Api` levanta el servidor Kestrel en `http://localhost:5000` y sirve la aplicación web completa de forma autónoma sin internet externa (RNF-07, RNF-08).
+- **Estado:** Pendiente.
 
 ---
 
-## Supuestos y contradicciones
-- **Supuesto 1 (Entorno de compilación y ejecución):** Dado que la capa de presentación utiliza WPF (`net8.0-windows`), se asume que las fases de compilación y empaquetado de la UI se ejecutan en un entorno Windows con el SDK de .NET 8 Desktop instalado, mientras que las capas de Dominio e Infraestructura son portables a cualquier entorno compatible con .NET 8.
-- **Supuesto 2 (Proyectos de pruebas no especificados en estructura de carpetas):** Aunque `diseño.md` lista únicamente los 3 proyectos principales en su diagrama de solución, se asume la creación de `VetClinic.Domain.Tests` y `VetClinic.Infrastructure.Tests` bajo xUnit para soportar los criterios de terminado verificables de cada fase.
-- **Supuesto 3 (Fragmento inicial residual en diseño.md):** Las líneas 1-18 de `diseño.md` contienen un borrador con nombres `VeterinariaDbContext` y `ProcedimientoClinico`; se asume como vinculante la especificación formal del resto del documento que nombra a la clase `VetClinicDbContext` y a la entidad `AtencionClinica`.
-- **Supuesto 4 (Versión de QuestPDF):** Dado que la versión exacta de QuestPDF no está fijada en `diseño.md`, se asume el uso de la versión 2023.12 o 2024.3 bajo licencia comunitaria (`QuestPDF.Settings.License = LicenseType.Community`).
-- **Supuesto 5 (Ruta de almacenamiento local de SQLite):** La base de datos SQLite se crea por defecto en `%LocalAppData%\VetClinic\vetclinic_local.db` según la configuración de `VetClinicDbContext` en `diseño.md`, creándose la carpeta automáticamente si no existe.
+## Supuestos y Decisiones de la Rama Web
+- **Supuesto 1 (Localhost autónomo):** La aplicación web opera en modo monopuesto local sobre Kestrel (`http://localhost:5000`) utilizando la base de datos embebida SQLite en `%LocalAppData%\VetClinic\vetclinic_local.db`, cumpliendo RNF-07 y RNF-08.
+- **Supuesto 2 (Reutilización de Capas Core):** Las capas `VetClinic.Domain` y `VetClinic.Infrastructure` se mantienen al 100% compatibles, asegurando los triggers de inmutabilidad de la Ley 576 y las 79 pruebas automatizadas existentes.
+- **Supuesto 3 (Paleta de Diseño):** Se aplica la paleta cálida y botánica aprobada (#166534 verde bosque, #059669 esmeralda, #FBF9F5 lino suave, #F59E0B ámbar) garantizando ratio de contraste $\ge 4.5:1$ (RNF-04).

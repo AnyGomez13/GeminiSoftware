@@ -1,4 +1,4 @@
-﻿C#
+C#
 namespace Veterinaria.Infrastructure.Data
 {
    public class VeterinariaDbContext : DbContext
@@ -1892,4 +1892,58 @@ ID Requisito
 	N/A
 	ExternalLauncherService (Llamadas a wa.me y mailto)
 	RecordatoriosView.xaml
-	Fin de la Especificación Técnica. Documento cerrado y listo para implementación inmediata por el equipo de ingeniería de software.
+
+---
+
+## ANEXO RAMA WEB: ESPECIFICACIÓN TÉCNICA Y ARQUITECTURA LOCALHOST (ASP.NET CORE + REACT SPA)
+
+### W.1 Justificación y Alcance de la Transición
+En la rama `web`, la interfaz de usuario evoluciona de WPF de escritorio a una arquitectura desacoplada moderna:
+- **Backend:** `VetClinic.Api` (ASP.NET Core Web API en .NET 8 LTS), sirviendo la lógica de negocio a través de Kestrel en `http://localhost:5000`.
+- **Frontend:** `VetClinic.Web` (Single Page Application en React 18 + TypeScript + Vite + Tailwind CSS).
+- **Persistencia y Dominio:** Se reutilizan al 100% las capas `VetClinic.Domain` y `VetClinic.Infrastructure`, preservando la base de datos embebida SQLite en `%LocalAppData%\VetClinic\vetclinic_local.db`, los disparadores de inmutabilidad de la Ley 576, la seguridad PBKDF2 y la generación de carnets PDF con QuestPDF.
+- **Cumplimiento de Restricciones:** La aplicación corre enteramente en la estación monopuesto (localhost), opera 100% fuera de línea (RNF-07, RNF-08) y no consume infraestructura de pago (RNF-09).
+
+### W.2 Catálogo de Endpoints REST (`VetClinic.Api`)
+| Método | Ruta | Descripción | Caso de Uso |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Autenticación con PBKDF2; retorna token y datos del usuario | CU-01, RF-01 |
+| `GET` | `/api/veterinarios` | Lista de veterinarios oficiales activos ("Dr. Fabio", "Dr. William") | RN-02, STF-01 |
+| `GET` | `/api/propietarios?criterio={q}` | Búsqueda reactiva de propietarios con normalización diacrítica | CU-02, RF-02 |
+| `POST` | `/api/propietarios` | Alta de propietario con validación de celular Colombia (10 dígitos, inicia en 3) | CU-02, RF-02, RN-04 |
+| `PUT` | `/api/propietarios/{id}` | Actualización de datos de contacto de propietario | CU-02, RF-03 |
+| `GET` | `/api/pacientes?criterio={q}` | Búsqueda y censo de pacientes con edad calculada y acudiente | CU-03, RF-04, RN-05 |
+| `GET` | `/api/pacientes/{id}` | Detalle completo de paciente (datos, histórico, vacunas, curva de peso) | CU-03, CU-04 |
+| `POST` | `/api/pacientes` | Registro de paciente asociado a propietario con validación de peso | CU-03, RF-04, RN-06 |
+| `PUT` | `/api/pacientes/{id}` | Actualización de datos básicos de paciente | CU-03, RF-05 |
+| `POST` | `/api/atenciones` | Registro de acto clínico inmutable; actualiza peso del paciente | CU-04, RF-06, RN-07 |
+| `GET` | `/api/atenciones/paciente/{pacienteId}` | Historial clínico cronológico inmutable del paciente | CU-04, RF-07 |
+| `POST` | `/api/inmunizaciones` | Registro de vacuna aplicada y refuerzo; inmutable | CU-05, RF-08 |
+| `GET` | `/api/inmunizaciones/paciente/{pacienteId}` | Registro de vacunas aplicadas a un paciente | CU-05, RF-08 |
+| `GET` | `/api/inmunizaciones/carnet-pdf/{pacienteId}` | Descarga en streaming del Carnet Digital PDF (QuestPDF) | CU-05, RF-09, RNF-06 |
+| `GET` | `/api/recordatorios?dias={d}&estado={todos\|proximos\|vencidos}` | Tablero de refuerzos pendientes con segmentación de mora | CU-06, RF-10, RF-11 |
+
+### W.3 Estrategia de DTOs (Data Transfer Objects)
+Para prevenir excepciones de ciclo circular en `System.Text.Json` (`JsonException`) y garantizar contratos limpios con TypeScript:
+1. `UsuarioDto`: Retorna `Id`, `Username`, `NombreCompleto`, `Rol`; omite estrictamente `PasswordHash` y `PasswordSalt`.
+2. `PropietarioDto`: Retorna datos limpios del acudiente y conteo/resumen de pacientes.
+3. `PacienteDto` y `PacienteDetalleDto`: Incluye `EdadFormateada`, peso actual y resumen de acudiente. En detalle incluye `CurvaPeso` (`[{ fecha, pesoKg }]`).
+4. `AtencionClinicaDto`: Retorna datos inmutables del acto clínico con nombre del veterinario tratante.
+5. `InmunizacionDto`: Retorna vacuna, lote, fecha de aplicación, fecha de refuerzo y estado calculado (`AlDia`, `Proximo`, `Vencido`).
+6. `RecordatorioDto`: Incluye datos del acudiente, mascota, vacuna, fecha de refuerzo, estado y URIs pregeneradas para WhatsApp (`https://wa.me/57...`) y correo (`mailto:`).
+
+### W.4 Sistema de Diseño y Paleta Clínica Cálida (Frontend)
+- **Fondo General:** Lino Cálido `#FBF9F5` (descanso visual en jornadas prolongadas).
+- **Tarjetas y Superficies:** Blanco `#FFFFFF` con bordes sutiles en tono piedra `#E7E5E4`.
+- **Verde Bosque Eucalipto (Marca/Sidebar):** `#166534` (primario de estructura).
+- **Esmeralda Botánico (Acción/Botones):** `#059669` (interacciones principales).
+- **Acento Ámbar Cálido (Vacunas próximas/alertas):** `#F59E0B` (calidez visual y prevención).
+- **Rojo Coral (Alertas clínicas críticas/vencidos):** `#DC2626`.
+- **Tipografía:** Inter / Segoe UI con escala de texto $\ge 14$px y contraste WCAG AAA superior a 7:1.
+
+### W.5 Componentes y Ergonomía Clínica de la SPA
+1. **Omnibox Global (`Ctrl + K`):** Búsqueda instantánea de pacientes y propietarios en cualquier momento.
+2. **Expediente 360°:** Cabecera con avatar de especie, badges de alerta médica, cálculo de edad, línea de tiempo inmutable y gráfica de curva de peso.
+3. **Panel Deslizante de Consulta (*Drawer*):** Formulario lateral para registrar atenciones sin perder de vista el historial previo del paciente.
+4. **Tablero de Recordatorios con 1 Clic:** Segmentación de refuerzos (Próximos vs Vencidos) con botones nativos para abrir WhatsApp Web y cliente de correo sin costos de mensajería (RN-09).
+5. **Hosting Monopuesto:** Kestrel sirve la API y los archivos estáticos de React compilados (`wwwroot`) en `http://localhost:5000` de forma unificada y autónoma.
