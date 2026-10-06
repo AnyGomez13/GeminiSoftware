@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { MainLayout } from './components/layout/MainLayout';
 import type { NavTab } from './components/layout/Sidebar';
 import {
@@ -13,14 +15,10 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { usuario, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<NavTab>('pacientes');
   const [searchTerm, setSearchTerm] = useState('');
-  const [usuario] = useState({
-    nombreCompleto: 'Dr. Fabio / Dr. William',
-    username: 'admin',
-    rol: 'Administrador Clínico',
-  });
 
   const getTabTitle = (tab: NavTab) => {
     switch (tab) {
@@ -51,7 +49,8 @@ export const App: React.FC = () => {
       onTabChange={setActiveTab}
       title={currentMeta.title}
       subtitle={currentMeta.subtitle}
-      usuarioNombre={usuario.nombreCompleto}
+      usuarioNombre={usuario?.nombreCompleto || 'Dr. Fabio / Dr. William'}
+      onLogout={logout}
       recordatoriosPendientesCount={2}
       searchValue={searchTerm}
       onSearchChange={setSearchTerm}
@@ -201,6 +200,16 @@ export const App: React.FC = () => {
         </button>
       </div>
     </MainLayout>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <ProtectedRoute>
+        <AppContent />
+      </ProtectedRoute>
+    </AuthProvider>
   );
 };
 

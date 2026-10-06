@@ -143,7 +143,7 @@
 - **Dependencias de fases anteriores:** Fase W-06.
 - **IDs de requisitos que cubre:** RF-01, CU-01, RN-01, RNF-01, RNF-08.
 - **Criterio de terminado verificable:** Login con `admin` / `Clinica2026*` autentica y redirige a la vista principal almacenando sesión; contraseña inválida despliega feedback visual en rojo y bloquea el acceso.
-- **Estado:** Pendiente.
+- **Estado:** Completada.
 
 ## Fase W-08: Módulo de Directorio de Propietarios y Censo de Pacientes (CU-02, CU-03, RF-02..05)
 - **Objetivo:** Construir las interfaces para directorio de acudientes y censo de mascotas, con búsqueda reactiva, modales de alta/edición y validación de celular Colombia.
