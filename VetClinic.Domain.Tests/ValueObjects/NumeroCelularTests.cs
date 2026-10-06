@@ -25,6 +25,10 @@ public class NumeroCelularTests
     [InlineData("573159876543", "3159876543")]
     [InlineData("300 123 4567", "3001234567")]
     [InlineData("300-123-4567", "3001234567")]
+    [InlineData("(300) 123-4567", "3001234567")]
+    [InlineData("300.123.4567", "3001234567")]
+    [InlineData("   300   123   4567   ", "3001234567")]
+    [InlineData("+57 (315) 987.6543", "3159876543")]
     public void Crear_CelularConPrefijoOEspacios_LimpiaYRetornaExito_RN04(string input, string esperado)
     {
         // Act

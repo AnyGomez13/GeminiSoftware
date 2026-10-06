@@ -17,7 +17,7 @@ public class ExternalLauncherService : IExternalLauncherService
 
     public static string ConstruirUriWhatsApp(string telefono, string mensaje)
     {
-        var limpio = telefono.Trim().Replace(" ", "").Replace("-", "");
+        var limpio = Regex.Replace(telefono.Trim(), @"[\s\-\(\)\.]+", "");
         if (limpio.StartsWith("+57"))
         {
             limpio = limpio[3..];

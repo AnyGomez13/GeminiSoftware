@@ -23,7 +23,7 @@ public sealed record NumeroCelular
             return Result.Failure<NumeroCelular>("El número de celular no puede estar vacío.");
         }
 
-        var limpio = input.Trim().Replace(" ", "").Replace("-", "");
+        var limpio = Regex.Replace(input.Trim(), @"[\s\-\(\)\.]+", "");
         if (limpio.StartsWith("+57"))
         {
             limpio = limpio[3..];
