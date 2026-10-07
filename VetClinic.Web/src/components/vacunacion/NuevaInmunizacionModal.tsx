@@ -189,19 +189,18 @@ export const NuevaInmunizacionModal: React.FC<NuevaInmunizacionModalProps> = ({
             <label className="block text-xs font-semibold text-botanical-graphite uppercase mb-1.5">
               Tipo de Biológico / Procedimiento *
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {(
                 [
                   { id: 'Vacuna', label: 'Vacuna' },
-                  { id: 'DesparasitacionInterna', label: 'Desparasit. Interna' },
-                  { id: 'DesparasitacionExterna', label: 'Desparasit. Externa' },
+                  { id: 'Desparasitante', label: 'Desparasitante' },
                 ] as const
               ).map((t) => (
                 <button
                   key={t.id}
                   type="button"
                   onClick={() => handleTipoChange(t.id)}
-                  className={`py-2 px-2 text-center rounded-xl text-xs font-semibold border transition-all ${
+                  className={`py-2 px-3 text-center rounded-xl text-xs font-semibold border transition-all ${
                     tipoBiologico === t.id
                       ? 'bg-botanical-forest text-white border-botanical-forest shadow-sm'
                       : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'

@@ -4,7 +4,7 @@ export type TipoDocumento = 'CC' | 'TI' | 'CE' | 'Pasaporte';
 export type Especie = 'Canino' | 'Felino' | 'Otro';
 export type Sexo = 'Macho' | 'Hembra';
 export type EstadoReproductivo = 'Entero' | 'CastradoEsterilizado';
-export type TipoBiologico = 'Vacuna' | 'DesparasitacionInterna' | 'DesparasitacionExterna';
+export type TipoBiologico = 'Vacuna' | 'Desparasitante';
 
 export interface Usuario {
   id: number;

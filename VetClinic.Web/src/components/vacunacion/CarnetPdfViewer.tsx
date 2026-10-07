@@ -249,11 +249,7 @@ export const CarnetPdfViewer: React.FC<CarnetPdfViewerProps> = ({ paciente }) =>
                           {fAplicacion}
                         </td>
                         <td className="py-3 px-3 text-botanical-muted">
-                          {inm.tipoBiologico === 'Vacuna'
-                            ? 'Vacuna'
-                            : inm.tipoBiologico === 'DesparasitacionInterna'
-                            ? 'Desparasit. Interna'
-                            : 'Desparasit. Externa'}
+                          {inm.tipoBiologico === 'Vacuna' ? 'Vacuna' : 'Desparasitante'}
                         </td>
                         <td className="py-3 px-3.5 font-bold text-botanical-graphite">
                           {inm.nombreProducto}

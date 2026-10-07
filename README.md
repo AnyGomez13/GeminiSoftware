@@ -150,7 +150,9 @@ GeminiSoftware/
 ├── VetClinic.Infrastructure.Tests/ # Pruebas de base de datos SQLite y persistencia
 ├── VetClinic.Api.Tests/            # Pruebas de controladores y pruebas de integración E2E
 │
-├── run-local.ps1                   # Script de compilación y lanzamiento en un solo paso
+├── run-local.ps1                   # Script de compilación y lanzamiento Web en Kestrel (localhost:5000)
+├── run-desktop.ps1                 # Script de lanzamiento de la aplicación de escritorio WPF
+├── run-both.ps1                    # Script para levantar ambas opciones (Web y Escritorio) simultáneamente
 ├── fases.md                        # Registro formal de fases y criterios de aceptación
 ├── GEMINI.md                       # Reglas permanentes y memoria del proyecto
 └── README.md                       # Documentación general del repositorio
@@ -160,38 +162,56 @@ GeminiSoftware/
 
 ## 🚀 Puesta en Marcha y Ejecución Local
 
-### Opción 1: Ejecución con Script Automático (Recomendada)
+VetClinic Pro permite ejecutar la versión Web moderna, la aplicación de escritorio nativa (WPF), o ambas simultáneamente. Al compartir el mismo motor SQLite embebido con soporte WAL (`%LocalAppData%\VetClinic\vetclinic_local.db`), cualquier acción realizada en una interfaz se refleja en la otra de manera inmediata.
 
-En una terminal PowerShell en la raíz del proyecto, ejecuta:
+---
+
+### 🌐 Opción A: Levantar la Versión Web (Recomendada)
+
+Accede a la interfaz moderna a través de tu navegador en `http://localhost:5000`.
 
 ```powershell
+# Mediante script automatizado (compila, sincroniza estáticos y abre el navegador):
 .\run-local.ps1
-```
 
-Este script:
-1. Compila la SPA React si no existe o hubo cambios.
-2. Sincroniza los archivos generados con `VetClinic.Api/wwwroot`.
-3. Inicia Kestrel en el puerto estándar `http://localhost:5000`.
-
-### Opción 2: Ejecución Manual con .NET CLI
-
-```powershell
-# 1. Compilar y empaquetar frontend (si aplica)
-cd VetClinic.Web
-npm run build
-cd ..
-
-# 2. Iniciar servidor backend
+# O manualmente con .NET CLI:
 dotnet run --project VetClinic.Api --urls "http://localhost:5000"
 ```
 
-### Acceso a la Aplicación
-
-- **Aplicación Web:** [http://localhost:5000](http://localhost:5000)
+- **URL de la Aplicación:** [http://localhost:5000](http://localhost:5000)
 - **Documentación Swagger / OpenAPI:** [http://localhost:5000/swagger](http://localhost:5000/swagger)
-- **Credenciales por defecto:**
-  - **Usuario:** `admin`
-  - **Contraseña:** `Clinica2026*`
+
+---
+
+### 🖥️ Opción B: Levantar la Versión de Escritorio (WPF Nativa)
+
+Abre la aplicación de escritorio tradicional para Windows:
+
+```powershell
+# Mediante script automatizado:
+.\run-desktop.ps1
+
+# O manualmente con .NET CLI:
+dotnet run --project VetClinic.Presentation
+```
+
+---
+
+### ⚡ Opción C: Levantar Ambas Opciones Simultáneamente (Web + Escritorio)
+
+Ejecuta el servidor web Kestrel en segundo plano, abre tu navegador y despliega en paralelo la ventana de escritorio WPF:
+
+```powershell
+.\run-both.ps1
+```
+
+*Nota: Al cerrar la ventana de WPF, el script finalizará de forma ordenada el proceso web secundario.*
+
+---
+
+### 🔑 Credenciales de Acceso por Defecto
+- **Usuario:** `admin`
+- **Contraseña:** `Clinica2026*`
 
 ---
 
